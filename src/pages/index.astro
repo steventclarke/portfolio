@@ -1,16 +1,80 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Home" description="Steven Clarke - Senior Software Engineer. Media supply chain, consulting, and AI-enabled product engineering.">
+  <section class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+    <div class="space-y-6">
+      <p class="text-sm font-medium uppercase tracking-[0.3em] text-teal-600 dark:text-teal-400">Senior Software Engineer</p>
+      <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+        Turning ambiguous problems into reliable software.
+      </h1>
+      <p class="max-w-2xl text-lg text-slate-600 dark:text-slate-300">
+        I build media supply-chain applications and complex systems with breadth across organizations, clear stakeholder alignment, and pragmatic delivery under constraints. I adapt quickly to new tools, including agentic AI and LLM workflows, while drawing on experience building software before the AI era.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a class="rounded-full bg-teal-600 px-6 py-2 text-sm font-medium text-white transition hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-400" href="/projects">View projects</a>
+        <a class="rounded-full border border-slate-300 px-6 py-2 text-sm font-medium transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400" href="/resume.pdf">Download resume</a>
+        <a class="rounded-full border border-slate-300 px-6 py-2 text-sm font-medium transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400" href="/contact">Get in touch</a>
+      </div>
+    </div>
+    <div class="flex justify-center lg:justify-end">
+      <div class="overflow-hidden rounded-3xl border border-slate-200 shadow-lg dark:border-slate-800">
+        <img src="/images/headshot.jpg" alt="Portrait of Steven Clarke" class="h-full w-full max-w-sm object-cover" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-16 space-y-6">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">Selected projects</h2>
+        <p class="text-slate-600 dark:text-slate-300">Four projects spanning fitness, computer vision, media metadata, and this portfolio.</p>
+      </div>
+      <a class="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300" href="/projects">See all projects →</a>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <article class="rounded-2xl border border-slate-200 p-6 transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800">
+        <p class="text-sm font-medium text-teal-600 dark:text-teal-400">Strength training</p>
+        <h3 class="mt-2 text-xl font-semibold">Iron Altar</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">A strength-training application focused on clear programming and tracking.</p>
+        <a class="mt-4 inline-flex text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300" href="/projects/iron-altar">Read case study →</a>
+      </article>
+      <article class="rounded-2xl border border-slate-200 p-6 transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800">
+        <p class="text-sm font-medium text-teal-600 dark:text-teal-400">Computer vision</p>
+        <h3 class="mt-2 text-xl font-semibold">Squat Monster</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Bar-path analysis using computer vision to analyze barbell lifts.</p>
+        <a class="mt-4 inline-flex text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300" href="/projects/squat-monster">Read case study →</a>
+      </article>
+      <article class="rounded-2xl border border-slate-200 p-6 transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800">
+        <p class="text-sm font-medium text-teal-600 dark:text-teal-400">Media metadata</p>
+        <h3 class="mt-2 text-xl font-semibold">Media Inspector</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Inspects media-file metadata and generates a Media Manifest Core specification file.</p>
+        <a class="mt-4 inline-flex text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300" href="/projects/media-inspector">Read case study →</a>
+      </article>
+      <article class="rounded-2xl border border-slate-200 p-6 transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800">
+        <p class="text-sm font-medium text-teal-600 dark:text-teal-400">Portfolio</p>
+        <h3 class="mt-2 text-xl font-semibold">Portfolio Website</h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">Astro, TypeScript, Tailwind CSS, AWS infrastructure as code, CI/CD, and preview deployments.</p>
+        <a class="mt-4 inline-flex text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300" href="/projects/portfolio-website">Read case study →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="mt-16 rounded-3xl border border-slate-200 p-8 dark:border-slate-800">
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <div class="space-y-4">
+        <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">Core strengths</h2>
+        <p class="text-slate-600 dark:text-slate-300">Breadth from consulting, clarity with stakeholders, and delivery under time and resource constraints. Focus on practical engineering and measurable outcomes through better alignment.</p>
+      </div>
+      <ul class="grid gap-3 sm:grid-cols-2">
+        <li class="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">Media supply chain</li>
+        <li class="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">TypeScript / Node</li>
+        <li class="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">AWS / Infrastructure as Code</li>
+        <li class="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">Agentic AI / LLM workflows</li>
+        <li class="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">Stakeholder alignment</li>
+        <li class="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800">Testing & reliability</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

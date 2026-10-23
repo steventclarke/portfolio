@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Media Inspector" description="Media Inspector - inspect media metadata and generate Media Manifest Core.">
+  <article class="space-y-8">
+    <header class="space-y-4">
+      <p class="text-sm font-medium uppercase tracking-[0.3em] text-teal-600 dark:text-teal-400">Case study</p>
+      <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">Media Inspector</h1>
+      <p class="max-w-3xl text-lg text-slate-600 dark:text-slate-300">
+        A web application that inspects media-file metadata and generates a Media Manifest Core specification file. This page reflects the current in-progress state.
+      </p>
+      <div class="flex flex-wrap gap-3 text-sm">
+        <a class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400" href="https://github.com/steventclarke/media-inspector">GitHub</a>
+        <a class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400" href="https://mediainspector.stevenclarke.dev">Demo</a>
+      </div>
+    </header>
+    <section class="grid gap-6 md:grid-cols-2">
+      <div class="space-y-3 rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+        <h2 class="text-xl font-semibold">Problem</h2>
+        <p class="text-slate-600 dark:text-slate-300">Make media metadata inspection and manifest generation consistent and usable for media supply-chain workflows.</p>
+      </div>
+      <div class="space-y-3 rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+        <h2 class="text-xl font-semibold">Approach</h2>
+        <p class="text-slate-600 dark:text-slate-300">Build a web tool that surfaces relevant metadata and produces a Media Manifest Core file with clear validation and outputs.</p>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold tracking-tight">Status</h2>
+      <p class="max-w-3xl text-slate-600 dark:text-slate-300">In progress. Architecture and screenshots are tracked in the repository.</p>
+    </section>
+  </article>
+</BaseLayout>
