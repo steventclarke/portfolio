@@ -23,7 +23,7 @@ These decisions are settled and replace the earlier open questions.
 | --- | --- |
 | Domain | `stevenclarke.dev`; purchased from GoDaddy. Delegate DNS to Route 53. |
 | Hosting model | Managed AWS services: S3 + CloudFront + Route 53 + ACM. No EC2 or container servers. |
-| AWS account and region | Account access and billing confirmed. Use `us-west-2` for S3 and project infrastructure. ACM certificate for CloudFront must be in `us-east-1`. |
+| AWS account and region | Managed by `stevenclarke-infrastructure`. Portfolio resources deploy to `us-east-2` (primary), with ACM certificates for CloudFront in `us-east-1`. |
 | Hosting budget | No more than $10/month, excluding domain registration. Analytics and optional services must fit within this budget. |
 | Framework | Astro + TypeScript + Tailwind CSS, static output by default. |
 | Content workflow | Steven writes Markdown/MDX directly in the repository. No CMS. |
@@ -171,35 +171,36 @@ Accessibility requirements:
 
 ## 8. AWS Architecture
 
+Platform ownership (in `stevenclarke-infrastructure`):
+- Route 53 hosted zone for `stevenclarke.dev` (GoDaddy nameservers delegated to it).
+- Shared ACM certificates in `us-east-1` for CloudFront, including the wildcard for `*.stevenclarke.dev` and any app-specific wildcards as needed.
+- GitHub OIDC identity provider and least-privilege deployment roles (`portfolio-deploy-preview`, `portfolio-deploy-prod`), published to SSM.
+- Shared VPC/network and parameter contract (hosted zone ID, certificate ARNs, deploy role ARNs).
+- Budget and monitoring.
+
+Application ownership (in `portfolio`):
+- S3 bucket for static build output (private), CloudFront distribution with OAC, and any portfolio-specific configuration.
+- DNS record for `stevenclarke.dev` (production) and `portfolio-preview.stevenclarke.dev` (preview) created in the shared hosted zone using the zone ID from SSM and scoped IAM permissions.
+- GitHub Actions using the deploy role ARN from SSM/OIDC to build, sync to S3, and invalidate CloudFront. No long-lived AWS keys.
+- AWS CDK in TypeScript in this repo to provision application resources.
+
 Baseline:
 
 ```text
-Route 53 (DNS)
-    |
-CloudFront (CDN, HTTPS, caching, security headers)
-    |
-S3 bucket (private origin, static build artifacts via OAC)
-
-GitHub Actions --OIDC--> AWS IAM role --deploy--> S3 + CloudFront invalidation
+Route 53 (shared, platform) --zone ID/records--> App DNS
+                |
+CloudFront (app, uses platform cert in us-east-1) --OAC--> S3 (app, private)
+                |
+GitHub Actions --OIDC (app role from platform)--> S3 sync + CloudFront invalidation
 ```
-
-Components:
-
-- **Route 53** hosted zone for `stevenclarke.dev`.
-- **ACM certificate** in `us-east-1` for CloudFront.
-- **S3 bucket** in `us-west-2` for build output, private, with public access blocked.
-- **CloudFront distribution** using Origin Access Control, HTTPS redirect, compression, caching, and security headers.
-- **GitHub Actions** for build, link checks, Lighthouse checks, and deploy. Use GitHub OIDC to assume an AWS role; do not store AWS keys in GitHub.
-- **AWS CDK in TypeScript** to create all of the above reproducibly.
 
 ### Pull-request previews
 
-Use a shared preview distribution rather than creating a CloudFront distribution per pull request:
-
-- Deploy each PR build to `previews/pr-<number>/` in the site bucket.
-- Serve previews from `preview.stevenclarke.dev`, using a CloudFront Function to map the path to the PR prefix.
+- Deploy each PR build to `previews/pr-<number>/` in the site bucket (or a preview bucket/path as defined by the app stack).
+- Serve previews from `portfolio-preview.stevenclarke.dev` (and/or use a CloudFront Function to map paths), served via a preview distribution or behavior as provisioned by the app stack.
 - Mark preview builds `noindex` and protect them from public discovery where practical.
-- Add a cleanup workflow that removes the prefix when a PR closes.
+- Add a cleanup workflow that removes the preview prefix when a PR closes.
+- Use the `portfolio-deploy-preview` role from the platform OIDC setup.
 
 ### Optional add-ons
 
@@ -260,7 +261,7 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 - Identify what each project needs to be presentable at launch; flag anything that will not be ready. **Done** — remaining `TBD` fields and asset gaps are tracked in Section 14 and the content-assets list.
 - Confirm NDA boundaries and approval process for the three proposed case studies. **Done** — see [NDA Case Studies Inventory](#16-nda-case-studies-inventory). Publication approval is still required per case study.
 - Gather the headshot, resume PDF, public email, LinkedIn URL, and GitHub URL. **Done** — assets are in `public/` and contact links are in `src/pages/contact.astro`.
-- Decide the preview-subdomain name and analytics provider shortlist. **Done** — previews will use `preview.stevenclarke.dev`; analytics is deferred for v1 because hosted cost does not fit the budget.
+- Decide the preview-subdomain name and analytics provider shortlist. **Done** — previews will use `portfolio-preview.stevenclarke.dev` per the platform contract; analytics is deferred for v1 because hosted cost does not fit the budget.
 
 ### Phase 1: Foundation (October 26–November 1)
 
@@ -269,7 +270,7 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 - Define design tokens, typography, layout shell, and navigation.
 - Implement Home, About, Projects index, Project detail, and Contact with placeholder content.
 - Add resume download and social links.
-- Provision the initial S3, CloudFront, Route 53, and ACM infrastructure with CDK.
+- Provision app resources (S3, CloudFront, DNS records) with CDK, consuming shared values from SSM and using platform roles/certificates. Coordinate with `stevenclarke-infrastructure` for zone, wildcard cert, and deploy roles.
 - Set up CI and the production deploy workflow early enough to catch integration issues.
 
 ### Phase 2: Content (November 2–15)
@@ -288,12 +289,12 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 - Lighthouse performance, accessibility, best-practices, and SEO checks.
 - Link checking and 404 page.
 - Test with 1–2 people who match the target audience and incorporate feedback.
-- Verify preview deployments and cleanup on pull requests.
+- Verify preview deployments to `portfolio-preview.stevenclarke.dev` using the `portfolio-deploy-preview` role and cleanup on pull requests.
 
 ### Phase 4: Launch (November 23–December 1)
 
-- Finalize Route 53, ACM, S3, CloudFront, custom domain, HTTPS, security headers, and cache invalidation.
-- Verify GitHub Actions OIDC deployment.
+- Finalize S3, CloudFront, DNS records, custom domain (via platform zone), HTTPS with platform-provided certificate, security headers, and cache invalidation.
+- Verify GitHub Actions OIDC deployment using the `portfolio-deploy-prod` role from the platform.
 - Verify DNS, redirects, canonical URLs, social previews, and `noindex` on previews.
 - Submit the sitemap to Google Search Console and Bing Webmaster Tools.
 - Run the launch checklist and monitor for errors.
@@ -302,7 +303,7 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 ### Phase 5: Post-launch
 
 - Revisit analytics only if a privacy-friendly hosted service fits the budget.
-- Publish NDA case studies once reviewed and approved.
+- Publish NDA case studies once reviewed and approved. Coordinate with `stevenclarke-infrastructure` if any platform resources are needed.
 - Add a technical blog or notes section if useful.
 - Review traffic and contact conversion.
 - Periodically update dependencies and rerun Lighthouse checks.
@@ -342,22 +343,22 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 | Content work takes longer than development | Start with the four project pages; ship and expand iteratively; defer the NDA case studies and blog |
 | Six-week schedule is tight at 10 hours/week | Protect scope: Home, Projects, four project pages, About, Contact, resume, 404. Defer analytics, blog, and case studies if needed |
 | Static site feels limited later | Architecture allows adding Lambda-backed forms, search, or a CMS without a rewrite |
-| AWS complexity distracts from job search | Use managed services and CDK; keep the initial build minimal and automated |
-| DNS delegation or infrastructure setup delays launch | Delegate GoDaddy nameservers to Route 53 early and verify the custom domain before the content freeze |
+| AWS complexity distracts from job search | Use managed services via platform; app owns only S3/CloudFront/DNS records and uses shared OIDC/roles/params from `stevenclarke-infrastructure` |
+| Platform not ready or DNS delegation delayed | Coordinate with `stevenclarke-infrastructure` for zone, certs, roles, and SSM params; use placeholder URLs/preview until available |
 | Analytics pushes the budget over $10/month | Keep analytics disabled for v1; revisit only if cost fits the budget |
-| Project inventory has unverified links and `TBD` assets | Verify all repository and demo URLs and fill `TBD` fields before publishing project pages |
-| Public repository exposes sensitive information | Scan for secrets, keep infrastructure identifiers out of source, and review NDA content before merging |
+| Public repository exposes sensitive information | Scan for secrets, read only from SSM/role ARNs, keep AWS identifiers out of source where possible, and review NDA content before merging |
 | Site performance degrades with heavy media | Optimize images, use modern formats, lazy-load below-the-fold media |
 
 ## 14. Refinements from Phase 0
 
-- Domain `stevenclarke.dev` is purchased at GoDaddy. Route 53 hosted-zone creation and nameserver delegation are part of infrastructure setup.
-- Pull-request previews will use `preview.stevenclarke.dev`.
+- Domain `stevenclarke.dev` is purchased at GoDaddy. Route 53 hosted-zone creation and nameserver delegation are part of `stevenclarke-infrastructure`.
+- Pull-request previews will use `portfolio-preview.stevenclarke.dev` (per platform hostname scheme). Legacy references to `preview.stevenclarke.dev` should be updated to match the platform contract.
 - Analytics is disabled for v1 because the hosted cost does not fit the budget.
 - The headshot, resume PDF, email, LinkedIn, and GitHub links are available and should be reused across the site.
 - Launch scope now includes four project pages: Iron Altar, Squat Monster, Media Inspector, and the Portfolio Website.
 - Remaining project content: app-store links, videos, key technical decisions, verified screenshots, and architecture details where marked `TBD`.
 - NDA case-study boundaries and the approval process are confirmed, but each case study still needs publication approval.
+- Application responsibilities: provision S3/CloudFront/DNS records in CDK, read hosted zone ID/cert ARNs/deploy role ARNs from SSM, use `portfolio-deploy-preview`/`portfolio-deploy-prod` via OIDC, and keep region alignment with platform (`us-east-2` primary, `us-east-1` for CloudFront certs).
 
 ## 15. Featured Projects Inventory
 
