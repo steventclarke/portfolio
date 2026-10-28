@@ -109,7 +109,7 @@ For each project, capture the current status, repository URL, demo or app-store 
 2. **Media inspection for content-pipeline automation** — the corporate version of Media Inspector, including what worked, what was difficult, downstream technical debt, and technology transitions during a corporate merger.
 3. **Retrofitting testability into event-driven microservices** — making existing services testable and automating application testing and validation.
 
-These should emphasize Steven's personal contribution, technical decisions, constraints, and lessons learned. They should not include client names, proprietary logic, confidential screenshots, or unapproved details. Draft them in Phase 2, but hold publication until review is complete.
+These should emphasize Steven's personal contribution, technical decisions, constraints, and lessons learned. They should not include client names, proprietary logic, confidential screenshots, or unapproved details. Draft them post-launch (Phase 4), but hold publication until review is complete.
 
 ## 6. Content Model
 
@@ -264,7 +264,10 @@ The repository is public. Keep AWS account IDs, secrets, analytics keys, and con
 
 ## 10. Implementation Schedule
 
-Capacity is roughly 10 hours per week, or about 60 hours between now and December 1, 2026. Content is the critical path, especially because the four featured projects are still in progress.
+Capacity is roughly 10 hours per week. The December 1, 2026 target is a **technical
+launch**: the scaffolding, infrastructure, and CI/CD are proven out and live over the
+domain with placeholder content, and the four applications are onboarded. Real content
+is filled in post-launch, because the four featured projects are still in progress.
 
 ### Phase 0: Discovery and launch prep (October 22–25) — Completed
 
@@ -290,39 +293,38 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 - [x] Set up CI (`ci.yml`) and the production deploy workflow (`deploy.yml`, `us-east-2`, `production` environment + `portfolio-deploy-prod`).
 - [x] Add the preview deploy workflow (`preview.yml`, `preview` branch, `portfolio-preview.stevenclarke.dev`, `noindex`).
 
-### Phase 2: Content (November 2–15) — Not started
+### Phase 2: Deploy and prove the scaffolding — Not started
+
+- [ ] Deploy the production stack (`npx cdk deploy -c environment=prod --all`) using `portfolio-deploy-prod` via the `production` GitHub Environment.
+- [ ] Deploy the preview stack (`npx cdk deploy -c environment=preview --all`) using `portfolio-deploy-preview` from the `preview` branch.
+- [ ] Verify DNS, HTTPS, the apex `stevenclarke.dev` → `portfolio.stevenclarke.dev` redirect, cache invalidation, and `noindex` on preview.
+- [ ] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
+- [ ] Basic responsive and keyboard-navigation pass on the placeholder shell.
+- [ ] Automated link checking on every deploy.
+- [ ] Run the launch checklist and launch on December 1, 2026.
+
+### Phase 3: Onboard the applications — Not started
+
+- [ ] Onboard Iron Altar, Squat Monster, and Media Inspector as tenant apps so their demo hostnames are live (`ironaltar.stevenclarke.dev`, `squatmonster.stevenclarke.dev`, `mediainspector.stevenclarke.dev`).
+- [ ] Confirm the platform contract (SSM params, deploy roles, DNS/OAC pattern) generalizes across repositories; coordinate with `stevenclarke-infrastructure`.
+- [ ] Update the portfolio demo/app-store links to the live hosts.
+
+### Phase 4: Content (post-launch) — Not started
 
 - [ ] Write the final positioning statement and About page.
 - [ ] Complete the four project write-ups and supporting media (pages are currently placeholder "in progress" copy).
 - [ ] Adopt the MDX content model from Section 6, or update the plan to reflect the current hardcoded `.astro` pages.
-- [ ] Draft the NDA case studies and keep them unpublished pending review.
+- [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
 - [ ] Create and optimize screenshots, diagrams, and Open Graph images.
 - [ ] Add SEO metadata, sitemap, robots.txt, structured data, and per-page Open Graph images.
 - [ ] Proofread for recruiter readability and NDA safety.
-
-### Phase 3: Quality (November 16–22) — Not started
-
-- [ ] Responsive and cross-browser testing.
-- [ ] Accessibility audit and fixes against WCAG 2.2 AA.
-- [ ] Lighthouse performance, accessibility, best-practices, and SEO checks.
-- [ ] Automated link checking on every deploy.
-- [x] 404 page (scaffolded: `public/404.html` plus the CloudFront error response).
+- [ ] Accessibility audit and WCAG 2.2 AA fixes against the final content.
+- [ ] Lighthouse performance, accessibility, best-practices, and SEO checks on final content.
 - [ ] Test with 1–2 people who match the target audience and incorporate feedback.
-- [ ] Verify preview deployments to `portfolio-preview.stevenclarke.dev` using `portfolio-deploy-preview`.
 
-### Phase 4: Launch (November 23–December 1) — Not started
-
-- [ ] Finalize S3, CloudFront, DNS records, custom domain (via platform zone), HTTPS with the platform certificate, security headers, and cache invalidation.
-- [ ] Verify the GitHub Actions OIDC deployment using the `portfolio-deploy-prod` role.
-- [ ] Verify DNS, redirects, canonical URLs, social previews, and `noindex` on previews.
-- [ ] Submit the sitemap to Google Search Console and Bing Webmaster Tools.
-- [ ] Run the launch checklist and monitor for errors.
-- [ ] Launch on December 1, 2026.
-
-### Phase 5: Post-launch — Not started
+### Phase 5: Post-launch housekeeping — Not started
 
 - [deferred] Revisit analytics only if a privacy-friendly hosted service fits the budget.
-- [ ] Publish NDA case studies once reviewed and approved.
 - [ ] Add a technical blog or notes section if useful.
 - [ ] Review traffic and contact conversion.
 - [ ] Periodically update dependencies and rerun Lighthouse checks.
@@ -340,17 +342,21 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 
 ## 12. Launch Checklist
 
-- Domain resolves and HTTPS works with the preferred `www` or apex redirect.
+For the technical launch (placeholder content), verify:
+
+- Domain resolves and HTTPS works; the apex `stevenclarke.dev` redirects to `portfolio.stevenclarke.dev`.
 - Home, Projects, each project page, About, Contact, resume, and 404 are live.
-- All four project pages have working source, demo, and app-store links where applicable.
+- The four project pages link to their GitHub repositories and (as available) live demos.
 - Public email, LinkedIn, and GitHub links work.
 - Resume PDF is current and downloadable.
-- Metadata, Open Graph previews, sitemap, and robots.txt are correct.
-- Accessibility and Lighthouse checks pass.
-- NDA review is complete for all published content.
+- The `preview` environment is `noindex`; production is indexable.
 - No secrets, AWS identifiers, or confidential material are in the public repository.
 - Analytics remains intentionally disabled for v1.
-- Preview deployments are cleaned up and not indexed.
+- CI, the preview workflow, and the production workflow complete successfully.
+
+Phase 4 adds the content-dependent items: SEO metadata and Open Graph previews,
+accessibility/Lighthouse passes on final content, and NDA review of any published case
+studies.
 
 ## 13. Risks and Tradeoffs
 
@@ -447,7 +453,7 @@ writing content but must be closed before the relevant phase.
 6. [x] **Lint/format/typecheck** — ESLint (`npm run lint`), Prettier (`npm run format` /
    `format:check`), and `astro check` (`npm run typecheck`) are configured and pass.
 7. [ ] **Content model** — pages are hardcoded `.astro` files rather than the MDX content
-   collection with typed frontmatter described in Section 6. Resolve in Phase 2.
+   collection with typed frontmatter described in Section 6. Resolve post-launch (Phase 4).
 8. [x] **Repository publication** — `steventclarke/portfolio` is published (public).
 9. [ ] **Platform prerequisites (before first deploy)** — requires the platform to
    publish the SSM parameters (hosted zone ID, wildcard certificate ARN), create the
