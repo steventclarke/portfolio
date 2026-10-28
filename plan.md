@@ -253,60 +253,66 @@ The repository is public. Keep AWS account IDs, secrets, analytics keys, and con
 
 Capacity is roughly 10 hours per week, or about 60 hours between now and December 1, 2026. Content is the critical path, especially because the four featured projects are still in progress.
 
-### Phase 0: Discovery and launch prep (October 22–25) — Complete
+### Phase 0: Discovery and launch prep (October 22–25) — Completed
 
-- Confirm `stevenclarke.dev` availability and register it. **Done** — purchased from GoDaddy. Route 53 hosted zone and nameserver delegation happen during infrastructure setup.
-- Confirm AWS account access, billing, and the `us-west-2` region setup. **Done** — account access and billing confirmed.
-- Inventory each featured project: current status, repository, demo/app-store links, screenshots, video, architecture notes. **Done** — see [Featured Projects Inventory](#15-featured-projects-inventory).
-- Identify what each project needs to be presentable at launch; flag anything that will not be ready. **Done** — remaining `TBD` fields and asset gaps are tracked in Section 14 and the content-assets list.
-- Confirm NDA boundaries and approval process for the three proposed case studies. **Done** — see [NDA Case Studies Inventory](#16-nda-case-studies-inventory). Publication approval is still required per case study.
-- Gather the headshot, resume PDF, public email, LinkedIn URL, and GitHub URL. **Done** — assets are in `public/` and contact links are in `src/pages/contact.astro`.
-- Decide the preview-subdomain name and analytics provider shortlist. **Done** — previews will use `portfolio-preview.stevenclarke.dev` per the platform contract; analytics is deferred for v1 because hosted cost does not fit the budget.
+- [x] Register `stevenclarke.dev` (purchased from GoDaddy; nameserver delegation occurs during infrastructure setup).
+- [x] Confirm AWS account access and billing.
+- [x] Inventory the four featured projects (status, repository, demo/app-store links, screenshots, video, architecture) — see [Featured Projects Inventory](#15-featured-projects-inventory).
+- [x] Identify what each project needs to be presentable at launch and flag not-ready items.
+- [x] Confirm NDA boundaries and the approval process for the three proposed case studies — see [NDA Case Studies Inventory](#16-nda-case-studies-inventory).
+- [x] Gather the headshot, resume PDF, public email, LinkedIn URL, and GitHub URL (`public/`, `src/pages/contact.astro`).
+- [x] Decide the preview-subdomain name and analytics shortlist (`portfolio-preview.stevenclarke.dev`; analytics deferred for v1 on cost).
 
-### Phase 1: Foundation (October 26–November 1)
+### Phase 1: Foundation (October 26–November 1) — In progress
 
-- Scaffold Astro + TypeScript + Tailwind
-- Set up linting, formatting, and type checking.
-- Define design tokens, typography, layout shell, and navigation.
-- Implement Home, About, Projects index, Project detail, and Contact with placeholder content.
-- Add resume download and social links.
-- Provision app resources (S3, CloudFront, DNS records) with CDK, consuming shared values from SSM and using platform roles/certificates. Coordinate with `stevenclarke-infrastructure` for zone, wildcard cert, and deploy roles.
-- Set up CI and the production deploy workflow early enough to catch integration issues.
+- [x] Scaffold Astro + TypeScript + Tailwind CSS (`npm run build` passes; 8 static routes generated).
+- [ ] Set up linting, formatting, and type checking — see Open Items.
+- [x] Define typography, layout shell, and navigation (`BaseLayout`, skip link, light/dark mode).
+- [ ] Extract design tokens (colors, spacing, and type scale are currently inline Tailwind classes, not tokens).
+- [x] Implement Home, About, Projects index, four project detail pages, and Contact with placeholder content.
+- [x] Add resume download and social links (footer and contact page).
+- [ ] Provision app resources (S3, CloudFront, DNS records) with CDK consuming shared SSM values and platform roles/certificates — see Open Items.
+- [ ] Read hosted-zone ID, certificate ARNs, and deploy-role ARNs from SSM.
+- [ ] Create production (`stevenclarke.dev`) and preview (`portfolio-preview.stevenclarke.dev`) DNS records in the shared hosted zone.
+- [x] Set up CI (`ci.yml`) and the production deploy workflow (`deploy.yml`).
+- [x] Add the preview (`preview.yml`) and cleanup (`cleanup-preview.yml`) workflows.
 
-### Phase 2: Content (November 2–15)
+### Phase 2: Content (November 2–15) — Not started
 
-- Write the positioning statement and About page.
-- Complete the four project write-ups and supporting media: Iron Altar, Squat Monster, Media Inspector, and the Portfolio Website. Depth beats quantity.
-- Draft the NDA case studies but keep them unpublished pending review.
-- Create and optimize screenshots, diagrams, and Open Graph images.
-- Add SEO metadata, sitemap, robots.txt, and structured data.
-- Proofread for recruiter readability and NDA safety.
+- [ ] Write the final positioning statement and About page.
+- [ ] Complete the four project write-ups and supporting media (pages are currently placeholder "in progress" copy).
+- [ ] Adopt the MDX content model from Section 6, or update the plan to reflect the current hardcoded `.astro` pages.
+- [ ] Draft the NDA case studies and keep them unpublished pending review.
+- [ ] Create and optimize screenshots, diagrams, and Open Graph images.
+- [ ] Add SEO metadata, sitemap, robots.txt, structured data, and per-page Open Graph images.
+- [ ] Proofread for recruiter readability and NDA safety.
 
-### Phase 3: Quality (November 16–22)
+### Phase 3: Quality (November 16–22) — Not started
 
-- Responsive and cross-browser testing.
-- Accessibility audit and fixes against WCAG 2.2 AA.
-- Lighthouse performance, accessibility, best-practices, and SEO checks.
-- Link checking and 404 page.
-- Test with 1–2 people who match the target audience and incorporate feedback.
-- Verify preview deployments to `portfolio-preview.stevenclarke.dev` using the `portfolio-deploy-preview` role and cleanup on pull requests.
+- [ ] Responsive and cross-browser testing.
+- [ ] Accessibility audit and fixes against WCAG 2.2 AA.
+- [ ] Lighthouse performance, accessibility, best-practices, and SEO checks.
+- [ ] Automated link checking on every deploy.
+- [x] 404 page (scaffolded: `public/404.html` plus the CloudFront error response).
+- [ ] Test with 1–2 people who match the target audience and incorporate feedback.
+- [ ] Verify preview deployments to `portfolio-preview.stevenclarke.dev` using `portfolio-deploy-preview` and PR cleanup.
 
-### Phase 4: Launch (November 23–December 1)
+### Phase 4: Launch (November 23–December 1) — Not started
 
-- Finalize S3, CloudFront, DNS records, custom domain (via platform zone), HTTPS with platform-provided certificate, security headers, and cache invalidation.
-- Verify GitHub Actions OIDC deployment using the `portfolio-deploy-prod` role from the platform.
-- Verify DNS, redirects, canonical URLs, social previews, and `noindex` on previews.
-- Submit the sitemap to Google Search Console and Bing Webmaster Tools.
-- Run the launch checklist and monitor for errors.
-- Launch on December 1, 2026.
+- [ ] Finalize S3, CloudFront, DNS records, custom domain (via platform zone), HTTPS with the platform certificate, security headers, and cache invalidation.
+- [ ] Verify the GitHub Actions OIDC deployment using the `portfolio-deploy-prod` role.
+- [ ] Verify DNS, redirects, canonical URLs, social previews, and `noindex` on previews.
+- [ ] Submit the sitemap to Google Search Console and Bing Webmaster Tools.
+- [ ] Run the launch checklist and monitor for errors.
+- [ ] Launch on December 1, 2026.
 
-### Phase 5: Post-launch
+### Phase 5: Post-launch — Not started
 
-- Revisit analytics only if a privacy-friendly hosted service fits the budget.
-- Publish NDA case studies once reviewed and approved. Coordinate with `stevenclarke-infrastructure` if any platform resources are needed.
-- Add a technical blog or notes section if useful.
-- Review traffic and contact conversion.
-- Periodically update dependencies and rerun Lighthouse checks.
+- [deferred] Revisit analytics only if a privacy-friendly hosted service fits the budget.
+- [ ] Publish NDA case studies once reviewed and approved.
+- [ ] Add a technical blog or notes section if useful.
+- [ ] Review traffic and contact conversion.
+- [ ] Periodically update dependencies and rerun Lighthouse checks.
 
 ## 11. Testing and Quality Gates
 
@@ -404,3 +410,32 @@ Capacity is roughly 10 hours per week, or about 60 hours between now and Decembe
 - **CMS migration from Fifth Kind to ADAM** — migration approach, content modeling, validation, and operational cutover lessons.
 - **Media inspection for content-pipeline automation** — the corporate version of Media Inspector, including what worked, what was difficult, downstream technical debt, and technology transitions during a corporate merger.
 - **Retrofitting testability into event-driven microservices** — making existing services testable and automating application testing and validation.
+
+## 17. Open Items
+
+Outstanding gaps between the current repository state and the plan. These do not block
+writing content but must be closed before the relevant phase.
+
+1. [ ] **Region alignment**: `infrastructure/cdk/bin/app.ts` and the GitHub Actions
+   workflows hardcode `us-west-2`. The plan requires `us-east-2` for app/platform
+   resources and `us-east-1` for CloudFront certificates (Sections 2 and 8).
+2. [ ] **CloudFront access model**: the stack uses an Origin Access Identity (`OAI`);
+   Section 8 specifies Origin Access Control (`OAC`).
+3. [ ] **SSM parameter contract**: the CDK stack does not read the shared values
+   (hosted-zone ID, certificate ARNs, deploy-role ARNs) published by
+   `stevenclarke-infrastructure` (Sections 8).
+4. [ ] **DNS records**: the CDK stack does not create the `stevenclarke.dev` or
+   `portfolio-preview.stevenclarke.dev` records in the shared hosted zone, and there is
+   no preview/prod environment split.
+5. [ ] **Preview subdomain and noindex**: `preview.yml` still deploys to
+   `preview.stevenclarke.dev` (should be `portfolio-preview.stevenclarke.dev`) and its
+   `noindex` step writes to `/tmp` but never applies the tag to the build output.
+6. [ ] **Lint/format/typecheck**: `npm run lint` is a stub (`echo lint skipped`); no
+   formatter is configured; and `npm run typecheck` (`astro check`) reports 7 errors
+   because the `infrastructure/cdk` dependencies (`aws-cdk-lib`, `constructs`) are not
+   installed.
+7. [ ] **Content model**: pages are hardcoded `.astro` files rather than the MDX content
+   collection with typed frontmatter described in Section 6.
+8. [ ] **Repository publication**: the local repository has no `origin` remote, and the
+   production/preview deploy secrets (platform deploy-role ARN, bucket, distribution
+   IDs) have not been configured.
