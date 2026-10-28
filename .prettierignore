@@ -1,0 +1,8 @@
+node_modules
+dist
+.astro
+package-lock.json
+infrastructure/cdk/node_modules
+infrastructure/cdk/dist
+infrastructure/cdk/cdk.out
+*.md

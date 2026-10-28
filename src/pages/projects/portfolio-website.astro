@@ -1,18 +1,35 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Portfolio Website" description="Portfolio website case study - Astro, TypeScript, Tailwind, AWS S3+CloudFront, CDK, GitHub Actions OIDC.">
+<BaseLayout
+  title="Portfolio Website"
+  description="Portfolio website case study - Astro, TypeScript, Tailwind, AWS S3+CloudFront, CDK, GitHub Actions OIDC."
+>
   <article class="space-y-8">
     <header class="space-y-4">
-      <p class="text-sm font-medium uppercase tracking-[0.3em] text-teal-600 dark:text-teal-400">Case study</p>
+      <p class="text-sm font-medium uppercase tracking-[0.3em] text-teal-600 dark:text-teal-400">
+        Case study
+      </p>
       <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">Portfolio Website</h1>
       <p class="max-w-3xl text-lg text-slate-600 dark:text-slate-300">
-        This site itself is a portfolio project: static-first Astro with TypeScript and Tailwind CSS, hosted on AWS S3 + CloudFront with Route 53 and ACM, provisioned with CDK, deployed via GitHub Actions with OIDC, and preview deployments for pull requests.
+        This site itself is a portfolio project: static-first Astro with TypeScript and Tailwind
+        CSS, hosted on AWS S3 + CloudFront with Route 53 and ACM, provisioned with CDK, deployed via
+        GitHub Actions with OIDC, and separate preview and production deployments.
       </p>
       <div class="flex flex-wrap gap-3 text-sm">
-        <a class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400" href="https://github.com/steventclarke/portfolio">GitHub</a>
-        <a class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400" href="https://portfolio.stevenclarke.dev">Demo</a>
+        <a
+          class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400"
+          href="https://github.com/steventclarke/portfolio"
+        >
+          GitHub
+        </a>
+        <a
+          class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400"
+          href="https://portfolio.stevenclarke.dev"
+        >
+          Demo
+        </a>
       </div>
     </header>
     <section class="grid gap-6 md:grid-cols-2">
@@ -26,15 +43,25 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       </div>
       <div class="space-y-3 rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
         <h2 class="text-xl font-semibold">Architecture</h2>
-        <p class="text-slate-600 dark:text-slate-300">Route 53 → CloudFront (ACM, OAC) → S3. GitHub Actions build and deploy with OIDC, invalidating CloudFront. PR previews served from preview.stevenclarke.dev.</p>
+        <p class="text-slate-600 dark:text-slate-300">
+          Route 53 → CloudFront (ACM, OAC) → S3. GitHub Actions build and deploy with OIDC,
+          invalidating CloudFront. The `preview` branch deploys to
+          portfolio-preview.stevenclarke.dev and the apex stevenclarke.dev redirects to
+          portfolio.stevenclarke.dev.
+        </p>
       </div>
       <div class="space-y-3 rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
         <h2 class="text-xl font-semibold">Tradeoffs</h2>
-        <p class="text-slate-600 dark:text-slate-300">Chose static delivery for speed, security, and low cost (under $10/month). Deferred analytics to stay within budget.</p>
+        <p class="text-slate-600 dark:text-slate-300">
+          Chose static delivery for speed, security, and low cost (under $10/month). Deferred
+          analytics to stay within budget.
+        </p>
       </div>
       <div class="space-y-3 rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
         <h2 class="text-xl font-semibold">Status</h2>
-        <p class="text-slate-600 dark:text-slate-300">In progress. Launch target December 1, 2026.</p>
+        <p class="text-slate-600 dark:text-slate-300">
+          In progress. Launch target December 1, 2026.
+        </p>
       </div>
     </section>
   </article>

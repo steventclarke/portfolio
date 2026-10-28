@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy (prod)
 
 on:
   push:
@@ -11,11 +11,10 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     env:
-      AWS_REGION: us-west-2
-      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
-      S3_BUCKET: ${{ secrets.S3_BUCKET }}
-      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+      AWS_REGION: us-east-2
+      DEPLOY_ROLE_ARN: ${{ vars.DEPLOY_ROLE_ARN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,7 +25,19 @@ jobs:
       - run: npm run build
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-to-assume: ${{ env.DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-      - run: aws s3 sync dist/ s3://${{ env.S3_BUCKET }}/ --delete
-      - run: aws cloudfront create-invalidation --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+      - name: Install infrastructure dependencies
+        run: npm ci
+        working-directory: infrastructure/cdk
+      - name: Deploy infrastructure
+        run: npx cdk deploy --all -c environment=prod --require-approval never --outputs-file cdk-outputs.json
+        working-directory: infrastructure/cdk
+      - name: Sync site to S3
+        run: |
+          BUCKET=$(jq -r '.["prod-PortfolioStack"].BucketName' infrastructure/cdk/cdk-outputs.json)
+          aws s3 sync dist/ "s3://${BUCKET}/" --delete
+      - name: Invalidate CloudFront
+        run: |
+          DIST=$(jq -r '.["prod-PortfolioStack"].DistributionId' infrastructure/cdk/cdk-outputs.json)
+          aws cloudfront create-invalidation --distribution-id "${DIST}" --paths "/*"

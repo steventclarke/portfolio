@@ -54,7 +54,7 @@ Follow this process for all changes:
 ## Branches
 
 - `main` — production. Merges require approval via the `production` GitHub Environment
-  and deploy to `stevenclarke.dev`.
+  and deploy to `portfolio.stevenclarke.dev`.
 - `preview` — integration. Merges auto-deploy the preview environment at
   `portfolio-preview.stevenclarke.dev`.
 - `phase/<n>` or `phase/<n>-<description>` — plan-phase work (e.g., `phase/2`).
@@ -94,8 +94,8 @@ Full docs: https://docs.astro.build — consult these before working on related 
 ## CDK workflow (application infrastructure)
 
 Application infrastructure lives in `infrastructure/cdk/` and reads shared values from
-SSM (hosted-zone ID, wildcard certificate ARN, deploy-role ARNs published by the
-platform) rather than hardcoding them.
+SSM (domain name, hosted-zone ID, wildcard certificate ARN published by the platform)
+rather than hardcoding them.
 
 ```bash
 cd infrastructure/cdk
@@ -115,6 +115,7 @@ npx cdk deploy -c environment=preview --all
 
 - Astro + TypeScript + Tailwind CSS for the site; static output by default.
 - AWS CDK (TypeScript) in `infrastructure/cdk/` for application resources.
+- Run `npm run lint`, `npm run format`, and `npm run typecheck` before committing.
 - Keep AWS account IDs, secrets, and NDA case-study material out of the repository.
 
 ## Commit messages

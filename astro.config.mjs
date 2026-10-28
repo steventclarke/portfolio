@@ -6,9 +6,9 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://stevenclarke.dev',
+  site: 'https://portfolio.stevenclarke.dev',
   integrations: [sitemap()],
   vite: {
-    plugins: [tailwindcss()]
-  }
+    plugins: [tailwindcss()],
+  },
 });
