@@ -139,6 +139,12 @@ export class PortfolioStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
     new cdk.CfnOutput(this, 'DomainName', { value: distribution.distributionDomainName });
 
+    new ssm.StringParameter(this, 'CloudFrontDomainParameter', {
+      parameterName: `/app/portfolio/${environment}/cloudfront-domain`,
+      stringValue: distribution.distributionDomainName,
+      description: `CloudFront distribution domain name for the portfolio ${environment} environment`,
+    });
+
     cdk.Tags.of(this).add('project', 'portfolio');
     cdk.Tags.of(this).add('environment', environment);
     cdk.Tags.of(this).add('owner', 'steventclarke');
