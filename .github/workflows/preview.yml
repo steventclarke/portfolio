@@ -3,6 +3,12 @@ name: Deploy (preview)
 on:
   push:
     branches: [preview]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'preview'
 
 permissions:
   id-token: write
@@ -16,6 +22,8 @@ jobs:
       PREVIEW_DEPLOY_ROLE_ARN: ${{ vars.PREVIEW_DEPLOY_ROLE_ARN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
