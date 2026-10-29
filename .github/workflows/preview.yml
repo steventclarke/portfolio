@@ -17,6 +17,7 @@ permissions:
 jobs:
   preview:
     runs-on: ubuntu-latest
+    environment: preview
     env:
       AWS_REGION: us-east-2
       PREVIEW_DEPLOY_ROLE_ARN: ${{ vars.PREVIEW_DEPLOY_ROLE_ARN }}
