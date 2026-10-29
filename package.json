@@ -10,7 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint": "echo lint skipped",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "astro check"
   },
   "dependencies": {
@@ -20,5 +22,16 @@
     "astro": "^7.4.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.72.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-astro": "^3.2.1",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.2",
+    "prettier-plugin-tailwindcss": "^0.8.1"
   }
 }

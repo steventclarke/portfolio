@@ -23,8 +23,9 @@ both a `preview` and a `prod` environment.
 
 | Deployment | Hostname |
 | --- | --- |
-| Production | `stevenclarke.dev` |
+| Production | `portfolio.stevenclarke.dev` |
 | Preview | `portfolio-preview.stevenclarke.dev` |
+| Apex | `stevenclarke.dev` (301-redirects to production) |
 
 ## AWS authentication (IAM Identity Center SSO)
 
@@ -61,8 +62,10 @@ live in `us-east-1`.
 1. Install dependencies: `npm install`
 2. Start the dev server in background mode: `astro dev --background`
    (`astro dev stop` / `astro dev status` / `astro dev logs` to manage it)
-3. Typecheck: `npm run typecheck`
-4. Build: `npm run build`
+3. Lint: `npm run lint`
+4. Format: `npm run format` (check with `npm run format:check`)
+5. Typecheck: `npm run typecheck`
+6. Build: `npm run build`
 
 ## Application infrastructure (CDK)
 
@@ -75,15 +78,15 @@ npx cdk diff -c environment=preview
 npx cdk deploy -c environment=preview --all
 ```
 
-The stack reads shared values (hosted-zone ID, wildcard certificate ARN, deploy-role
-ARNs) from SSM published by `stevenclarke-infrastructure`, creates its own DNS records in
-the shared hosted zone, and uses per-app platform deploy roles via GitHub OIDC. All
-resources are tagged `project`, `environment`, `owner`, `application`, `managed-by`.
+The stack reads shared values (domain name, hosted-zone ID, wildcard certificate ARN)
+from SSM published by `stevenclarke-infrastructure`, uses Origin Access Control (OAC),
+creates its own DNS records in the shared hosted zone, and is tagged `project`,
+`environment`, `owner`, `application`, `managed-by`.
 
 ## Branch conventions
 
 - `main` — production. Merges require PR approval via the `production` GitHub Environment
-  and deploy to `stevenclarke.dev`.
+  and deploy to `portfolio.stevenclarke.dev`.
 - `preview` — integration. Merges auto-deploy the preview environment at
   `portfolio-preview.stevenclarke.dev`.
 - `phase/<n>` or `phase/<n>-<description>` — plan-phase work (e.g., `phase/2`,
@@ -94,9 +97,15 @@ resources are tagged `project`, `environment`, `owner`, `application`, `managed-
 
 Continuous deployment via GitHub Actions with OIDC (no long-lived AWS keys):
 
-- Merge to `preview` → auto-deploy using `portfolio-deploy-preview`.
-- Merge to `main` → deploy `stevenclarke.dev` using `portfolio-deploy-prod` after manual
-  approval through the `production` GitHub Environment.
+- Merge to `preview` → auto-deploy `portfolio-preview.stevenclarke.dev` using
+  `portfolio-deploy-preview`.
+- Merge to `main` → deploy `portfolio.stevenclarke.dev` (with the apex
+  `stevenclarke.dev` redirect) using `portfolio-deploy-prod` after manual approval through
+  the `production` GitHub Environment.
+
+Before the first deploy, set the GitHub repository variables `DEPLOY_ROLE_ARN` (prod) and
+`PREVIEW_DEPLOY_ROLE_ARN` (preview) from the platform SSM parameters
+(`/platform/roles/portfolio/{prod,preview}/deploy-role-arn`).
 
 ## Contributing
 
