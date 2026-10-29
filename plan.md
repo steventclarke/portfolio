@@ -293,15 +293,21 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Set up CI (`ci.yml`) and the production deploy workflow (`deploy.yml`, `us-east-2`, `production` environment + `portfolio-deploy-prod`).
 - [x] Add the preview deploy workflow (`preview.yml`, `preview` branch, `portfolio-preview.stevenclarke.dev`, `noindex`).
 
-### Phase 2: Deploy and prove the scaffolding — Not started
+### Phase 2: Deploy and prove the scaffolding — In progress
 
-- [ ] Deploy the production stack (`npx cdk deploy -c environment=prod --all`) using `portfolio-deploy-prod` via the `production` GitHub Environment.
-- [ ] Deploy the preview stack (`npx cdk deploy -c environment=preview --all`) using `portfolio-deploy-preview` from the `preview` branch.
-- [ ] Verify DNS, HTTPS, the apex `stevenclarke.dev` → `portfolio.stevenclarke.dev` redirect, cache invalidation, and `noindex` on preview.
-- [ ] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
+- [ ] Deploy the production stack (`npx cdk deploy -c environment=prod --all`) using `portfolio-deploy-prod` via the `production` GitHub Environment (on merge to `main`).
+- [x] Deploy the preview stack (`npx cdk deploy -c environment=preview --all`) — deployed from the workstation; live at `portfolio-preview.stevenclarke.dev`.
+- [x] Verify DNS, HTTPS, cache invalidation, and `noindex` on preview (apex redirect is verified once production is deployed).
+- [x] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
 - [ ] Basic responsive and keyboard-navigation pass on the placeholder shell.
-- [ ] Automated link checking on every deploy.
+- [x] Automated link checking on every deploy (`npm run links`, wired into CI and both deploy workflows).
 - [ ] Run the launch checklist and launch on December 1, 2026.
+
+Phase 2 fixes discovered while proving the scaffolding:
+
+- `valueFromLookup` returns a `dummy-value-for-…` on the first synth pass, which tripped the certificate ARN validation; the certificate is now resolved at deploy time via an SSM-backed CloudFormation parameter.
+- S3 + OAC does not resolve directory `index.html`, so a viewer-request CloudFront Function rewrites extensionless paths to `/index.html` (and the production variant also performs the apex redirect).
+- Missing objects return 403 from S3/OAC, so 403 is mapped to the 404 page alongside 404.
 
 ### Phase 3: Onboard the applications — Not started
 
@@ -455,9 +461,9 @@ writing content but must be closed before the relevant phase.
 7. [ ] **Content model** — pages are hardcoded `.astro` files rather than the MDX content
    collection with typed frontmatter described in Section 6. Resolve post-launch (Phase 4).
 8. [x] **Repository publication** — `steventclarke/portfolio` is published (public).
-9. [ ] **Platform prerequisites (before first deploy)** — requires the platform to
-   publish the SSM parameters (hosted zone ID, wildcard certificate ARN), create the
-   apex `stevenclarke.dev` record pointing at the production distribution, and register
-   the `portfolio-deploy-preview`/`portfolio-deploy-prod` roles. Then set the GitHub
-   repository variables `DEPLOY_ROLE_ARN` (prod) and `PREVIEW_DEPLOY_ROLE_ARN`
-   (preview) and the `production` GitHub Environment.
+9. [ ] **Platform prerequisites (before production deploy)** — the SSM parameters and
+   `portfolio-deploy-preview`/`portfolio-deploy-prod` roles are published, the GitHub
+   variables `DEPLOY_ROLE_ARN`/`PREVIEW_DEPLOY_ROLE_ARN` are set, and the `production`
+   GitHub Environment (required reviewer) is configured. Remaining: the platform must
+   create the apex `stevenclarke.dev` record pointing at the production distribution so
+   the apex redirect works.

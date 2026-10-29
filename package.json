@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "links": "node .github/scripts/check-links.mjs",
     "typecheck": "astro check"
   },
   "dependencies": {
