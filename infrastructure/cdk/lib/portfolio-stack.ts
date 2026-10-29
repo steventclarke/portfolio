@@ -22,7 +22,9 @@ export class PortfolioStack extends cdk.Stack {
 
     const domainName = ssm.StringParameter.valueFromLookup(this, '/platform/dns/domain-name');
     const hostedZoneId = ssm.StringParameter.valueFromLookup(this, '/platform/dns/hosted-zone-id');
-    const certificateArn = ssm.StringParameter.valueFromLookup(
+    // Resolve the certificate at deploy time (SSM-backed CloudFormation parameter) so that
+    // valueFromLookup's first-pass "dummy-value" does not trip the ARN validation.
+    const certificateArn = ssm.StringParameter.valueForTypedStringParameterV2(
       this,
       '/platform/certs/us-east-1/wildcard-arn',
     );
@@ -40,20 +42,22 @@ export class PortfolioStack extends cdk.Stack {
     });
 
     const aliases = [primaryHost];
-    let apexRedirect: cloudfront.Function | undefined;
-
     if (production) {
       aliases.push(domainName);
+    }
 
-      apexRedirect = new cloudfront.Function(this, 'ApexRedirect', {
-        runtime: cloudfront.FunctionRuntime.JS_2_0,
-        code: cloudfront.FunctionCode.fromInline(
-          `function handler(event) {
-  var host = event.request.headers.host ? event.request.headers.host.value : '';
+    const routeFunction = new cloudfront.Function(this, 'RouteAndRedirect', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(
+        production
+          ? `function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  var host = (request.headers && request.headers.host) ? request.headers.host.value : '';
   if (host === '${domainName}') {
-    var location = 'https://${primaryHost}' + event.request.uri;
-    if (event.request.querystring && event.request.querystring !== '') {
-      location += '?' + event.request.querystring;
+    var location = 'https://${primaryHost}' + uri;
+    if (request.querystring && request.querystring !== '') {
+      location += '?' + request.querystring;
     }
     return {
       statusCode: 301,
@@ -61,11 +65,25 @@ export class PortfolioStack extends cdk.Stack {
       headers: { location: { value: location } }
     };
   }
-  return event.request;
+  if (uri.endsWith('/')) {
+    request.uri = uri + 'index.html';
+  } else if (!uri.includes('.')) {
+    request.uri = uri + '/index.html';
+  }
+  return request;
+}`
+          : `function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  if (uri.endsWith('/')) {
+    request.uri = uri + 'index.html';
+  } else if (!uri.includes('.')) {
+    request.uri = uri + '/index.html';
+  }
+  return request;
 }`,
-        ),
-      });
-    }
+      ),
+    });
 
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultRootObject: 'index.html',
@@ -73,20 +91,21 @@ export class PortfolioStack extends cdk.Stack {
         origin,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         compress: true,
-        ...(apexRedirect
-          ? {
-              functionAssociations: [
-                {
-                  function: apexRedirect,
-                  eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
-                },
-              ],
-            }
-          : {}),
+        functionAssociations: [
+          {
+            function: routeFunction,
+            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+          },
+        ],
       },
       domainNames: aliases,
       certificate: acm.Certificate.fromCertificateArn(this, 'SiteCertificate', certificateArn),
       errorResponses: [
+        {
+          httpStatus: 403,
+          responseHttpStatus: 404,
+          responsePagePath: '/404.html',
+        },
         {
           httpStatus: 404,
           responseHttpStatus: 404,
