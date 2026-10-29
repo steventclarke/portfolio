@@ -301,6 +301,7 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
 - [ ] Basic responsive and keyboard-navigation pass on the placeholder shell.
 - [x] Automated link checking on every deploy (`npm run links`, wired into CI and both deploy workflows).
+- [x] Add manual `workflow_dispatch` deploy jobs for preview and production (branch input, defaulting to `preview` and `main`).
 - [ ] Run the launch checklist and launch on December 1, 2026.
 
 Phase 2 fixes discovered while proving the scaffolding:
