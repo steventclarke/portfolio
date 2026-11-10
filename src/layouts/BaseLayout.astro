@@ -4,9 +4,27 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { title, description = 'Steven Clarke - Senior Software Engineer' } = Astro.props;
+const {
+  title,
+  description = 'Steven Clarke - Software Engineer based in Austin, TX building full stack web applications and distributed systems.',
+  noindex = false,
+} = Astro.props;
+
+const navLinks = [
+  { href: '/projects', label: 'Projects' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/resume.pdf', label: 'Resume' },
+];
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) =>
+  href.endsWith('.pdf')
+    ? currentPath === href
+    : currentPath === href || currentPath.startsWith(`${href}/`);
 ---
 
 <!doctype html>
@@ -15,6 +33,7 @@ const { title, description = 'Steven Clarke - Senior Software Engineer' } = Astr
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
     <title>{title} | Steven Clarke</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
@@ -27,25 +46,25 @@ const { title, description = 'Steven Clarke - Senior Software Engineer' } = Astr
     </a>
     <header class="border-b border-slate-200/60 dark:border-slate-800/80">
       <nav
-        class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6"
+        class="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
         aria-label="Primary"
       >
         <a href="/" class="text-lg font-semibold tracking-tight">
           Steven Clarke
         </a>
-        <div class="flex flex-wrap items-center gap-4 text-sm font-medium">
-          <a class="hover:text-teal-600 dark:hover:text-teal-400" href="/projects">
-            Projects
-          </a>
-          <a class="hover:text-teal-600 dark:hover:text-teal-400" href="/about">
-            About
-          </a>
-          <a class="hover:text-teal-600 dark:hover:text-teal-400" href="/contact">
-            Contact
-          </a>
-          <a class="hover:text-teal-600 dark:hover:text-teal-400" href="/resume.pdf">
-            Resume
-          </a>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium">
+          {navLinks.map(({ href, label }) => (
+            <a
+              href={href}
+              aria-current={isCurrent(href) ? 'page' : undefined}
+              class:list={[
+                'rounded-md py-1 transition hover:text-teal-600 dark:hover:text-teal-400',
+                isCurrent(href) && 'text-teal-600 dark:text-teal-400',
+              ]}
+            >
+              {label}
+            </a>
+          ))}
         </div>
       </nav>
     </header>
@@ -55,7 +74,7 @@ const { title, description = 'Steven Clarke - Senior Software Engineer' } = Astr
     <footer class="border-t border-slate-200/60 dark:border-slate-800/80">
       <div class="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:text-slate-400">
         <p>© {new Date().getFullYear()} Steven Clarke</p>
-        <div class="flex gap-4">
+        <div class="flex flex-wrap gap-4">
           <a
             class="hover:text-teal-600 dark:hover:text-teal-400"
             href="mailto:steven.t.clarke@gmail.com"
@@ -65,12 +84,14 @@ const { title, description = 'Steven Clarke - Senior Software Engineer' } = Astr
           <a
             class="hover:text-teal-600 dark:hover:text-teal-400"
             href="https://www.linkedin.com/in/steven-clarke-0647a039/"
+            rel="noopener noreferrer"
           >
             LinkedIn
           </a>
           <a
             class="hover:text-teal-600 dark:hover:text-teal-400"
             href="https://github.com/steventclarke"
+            rel="noopener noreferrer"
           >
             GitHub
           </a>

@@ -299,7 +299,7 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Deploy the preview stack (`npx cdk deploy -c environment=preview --all`) — deployed from the workstation; live at `portfolio-preview.stevenclarke.dev`.
 - [x] Verify DNS, HTTPS, cache invalidation, and `noindex` on preview (apex redirect is verified once production is deployed).
 - [x] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
-- [ ] Basic responsive and keyboard-navigation pass on the placeholder shell.
+- [x] Basic responsive and keyboard-navigation pass on the placeholder shell (mobile nav stacks, `aria-current` on the active link, visible `:focus-visible` outlines, `prefers-reduced-motion` support, and the 404 page moved onto `BaseLayout`).
 - [x] Automated link checking on every deploy (`npm run links`, wired into CI and both deploy workflows).
 - [x] Add manual `workflow_dispatch` deploy jobs for preview and production (branch input, defaulting to `preview` and `main`).
 - [x] Publish the CloudFront distribution domain name to SSM (`/app/portfolio/{environment}/cloudfront-domain`) for the platform's apex-record handoff (created on the next deploy).
@@ -311,6 +311,8 @@ Phase 2 fixes discovered while proving the scaffolding:
 - S3 + OAC does not resolve directory `index.html`, so a viewer-request CloudFront Function rewrites extensionless paths to `/index.html` (and the production variant also performs the apex redirect).
 - The apex redirect appended `request.querystring` (an object) to the `Location` header, producing `?[object Object]`; it now uses `request.rawQueryString()` so the original path and query string are preserved without double encoding.
 - Missing objects return 403 from S3/OAC, so 403 is mapped to the 404 page alongside 404.
+- Launch-readiness polish: the hero copy now reflects the current Austin-based positioning and open availability for full-time, contract, or freelance work; the About location line was aligned to match. The 404 page is generated from `src/pages/404.astro` on the shared layout (and marked `noindex`) instead of a standalone `public/404.html`.
+- Deploy freshness: S3 uploads now set `Cache-Control` metadata (`max-age=0, must-revalidate` for HTML/XML; one-year `immutable` for hashed `_astro/*` assets) and both deploy workflows wait for the CloudFront `/*` invalidation to complete before finishing, so trailing- and non-trailing-slash URLs update together on every deploy.
 
 ### Phase 3: Onboard the applications — Not started
 
@@ -318,10 +320,11 @@ Phase 2 fixes discovered while proving the scaffolding:
 - [ ] Confirm the platform contract (SSM params, deploy roles, DNS/OAC pattern) generalizes across repositories; coordinate with `stevenclarke-infrastructure`.
 - [ ] Update the portfolio demo/app-store links to the live hosts.
 
-### Phase 4: Content (post-launch) — Not started
+### Phase 4: Content (post-launch) — In progress
 
 - [ ] Write the final positioning statement and About page.
-- [ ] Complete the four project write-ups and supporting media (pages are currently placeholder "in progress" copy).
+- [ ] Complete the four project write-ups and supporting media using the case-study template in `templates/project-case-study.md`.
+  - [x] Iron Altar case study drafted in `templates/drafts/iron-altar.md` and rendered at `src/pages/projects/iron-altar.astro` (status, problem, approach, development plan, challenges, tradeoffs, lessons, evidence).
 - [ ] Adopt the MDX content model from Section 6, or update the plan to reflect the current hardcoded `.astro` pages.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
 - [ ] Create and optimize screenshots, diagrams, and Open Graph images.

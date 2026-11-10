@@ -4,22 +4,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Home"
-  description="Steven Clarke - Senior Software Engineer. Media supply chain, consulting, and AI-enabled product engineering."
+  description="Steven Clarke - Austin-based software engineer building full stack web applications and distributed systems. Open to full-time, contract, and freelance work."
 >
   <section class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
     <div class="space-y-6">
       <p class="text-sm font-medium uppercase tracking-[0.3em] text-teal-600 dark:text-teal-400">
-        Senior Software Engineer
+        Software Engineer
       </p>
       <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
         Turning ambiguous problems into reliable software.
       </h1>
-      <p class="max-w-2xl text-lg text-slate-600 dark:text-slate-300">
-        I build media supply-chain applications and complex systems with breadth across
-        organizations, clear stakeholder alignment, and pragmatic delivery under constraints. I
-        adapt quickly to new tools, including agentic AI and LLM workflows, while drawing on
-        experience building software before the AI era.
-      </p>
+      <div class="max-w-2xl space-y-4 text-lg text-slate-600 dark:text-slate-300">
+        <p class="text-slate-700 dark:text-slate-200">
+          Austin, TX based software engineering expert.
+        </p>
+        <p>
+          I build full stack web applications and distributed systems using modern software
+          development practices. My background is in software engineering professional services
+          delivery, and I have designed and built custom web applications for over 10 years for a
+          wide range of clients with complex needs and third party integrations.
+        </p>
+        <p>I am currently open to full time, contract or freelance work.</p>
+      </div>
       <div class="flex flex-wrap gap-3">
         <a
           class="rounded-full bg-teal-600 px-6 py-2 text-sm font-medium text-white transition hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-400"
@@ -46,8 +52,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <img
           src="/images/headshot.jpg"
           alt="Portrait of Steven Clarke"
-          class="h-full w-full max-w-sm object-cover"
-          loading="lazy"
+          width="750"
+          height="750"
+          class="h-auto w-full max-w-sm object-cover"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
       </div>
     </div>
