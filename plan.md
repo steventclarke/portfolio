@@ -299,7 +299,7 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Deploy the preview stack (`npx cdk deploy -c environment=preview --all`) — deployed from the workstation; live at `portfolio-preview.stevenclarke.dev`.
 - [x] Verify DNS, HTTPS, cache invalidation, and `noindex` on preview (apex redirect is verified once production is deployed).
 - [x] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
-- [ ] Basic responsive and keyboard-navigation pass on the placeholder shell.
+- [x] Basic responsive and keyboard-navigation pass on the placeholder shell (mobile nav stacks, `aria-current` on the active link, visible `:focus-visible` outlines, `prefers-reduced-motion` support, and the 404 page moved onto `BaseLayout`).
 - [x] Automated link checking on every deploy (`npm run links`, wired into CI and both deploy workflows).
 - [x] Add manual `workflow_dispatch` deploy jobs for preview and production (branch input, defaulting to `preview` and `main`).
 - [x] Publish the CloudFront distribution domain name to SSM (`/app/portfolio/{environment}/cloudfront-domain`) for the platform's apex-record handoff (created on the next deploy).
@@ -311,6 +311,7 @@ Phase 2 fixes discovered while proving the scaffolding:
 - S3 + OAC does not resolve directory `index.html`, so a viewer-request CloudFront Function rewrites extensionless paths to `/index.html` (and the production variant also performs the apex redirect).
 - The apex redirect appended `request.querystring` (an object) to the `Location` header, producing `?[object Object]`; it now uses `request.rawQueryString()` so the original path and query string are preserved without double encoding.
 - Missing objects return 403 from S3/OAC, so 403 is mapped to the 404 page alongside 404.
+- Launch-readiness polish: the hero copy now reflects the current Austin-based positioning and open availability for full-time, contract, or freelance work; the About location line was aligned to match. The 404 page is generated from `src/pages/404.astro` on the shared layout (and marked `noindex`) instead of a standalone `public/404.html`.
 
 ### Phase 3: Onboard the applications — Not started
 
