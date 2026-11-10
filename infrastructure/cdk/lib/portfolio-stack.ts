@@ -56,8 +56,9 @@ export class PortfolioStack extends cdk.Stack {
   var host = (request.headers && request.headers.host) ? request.headers.host.value : '';
   if (host === '${domainName}') {
     var location = 'https://${primaryHost}' + uri;
-    if (request.querystring && request.querystring !== '') {
-      location += '?' + request.querystring;
+    var querystring = request.rawQueryString();
+    if (querystring) {
+      location += '?' + querystring;
     }
     return {
       statusCode: 301,
