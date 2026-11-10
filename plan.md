@@ -322,7 +322,7 @@ Phase 2 fixes discovered while proving the scaffolding:
 ### Phase 4: Content (post-launch) — Not started
 
 - [ ] Write the final positioning statement and About page.
-- [ ] Complete the four project write-ups and supporting media (pages are currently placeholder "in progress" copy).
+- [ ] Complete the four project write-ups and supporting media using the case-study template in `templates/project-case-study.md` (pages are currently placeholder "in progress" copy).
 - [ ] Adopt the MDX content model from Section 6, or update the plan to reflect the current hardcoded `.astro` pages.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
 - [ ] Create and optimize screenshots, diagrams, and Open Graph images.
