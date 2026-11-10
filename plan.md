@@ -309,6 +309,7 @@ Phase 2 fixes discovered while proving the scaffolding:
 
 - `valueFromLookup` returns a `dummy-value-for-…` on the first synth pass, which tripped the certificate ARN validation; the certificate is now resolved at deploy time via an SSM-backed CloudFormation parameter.
 - S3 + OAC does not resolve directory `index.html`, so a viewer-request CloudFront Function rewrites extensionless paths to `/index.html` (and the production variant also performs the apex redirect).
+- The apex redirect appended `request.querystring` (an object) to the `Location` header, producing `?[object Object]`; it now uses `request.rawQueryString()` so the original path and query string are preserved without double encoding.
 - Missing objects return 403 from S3/OAC, so 403 is mapped to the 404 page alongside 404.
 
 ### Phase 3: Onboard the applications — Not started
