@@ -312,6 +312,7 @@ Phase 2 fixes discovered while proving the scaffolding:
 - The apex redirect appended `request.querystring` (an object) to the `Location` header, producing `?[object Object]`; it now uses `request.rawQueryString()` so the original path and query string are preserved without double encoding.
 - Missing objects return 403 from S3/OAC, so 403 is mapped to the 404 page alongside 404.
 - Launch-readiness polish: the hero copy now reflects the current Austin-based positioning and open availability for full-time, contract, or freelance work; the About location line was aligned to match. The 404 page is generated from `src/pages/404.astro` on the shared layout (and marked `noindex`) instead of a standalone `public/404.html`.
+- Deploy freshness: S3 uploads now set `Cache-Control` metadata (`max-age=0, must-revalidate` for HTML/XML; one-year `immutable` for hashed `_astro/*` assets) and both deploy workflows wait for the CloudFront `/*` invalidation to complete before finishing, so trailing- and non-trailing-slash URLs update together on every deploy.
 
 ### Phase 3: Onboard the applications — Not started
 
