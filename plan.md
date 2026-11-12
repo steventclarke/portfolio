@@ -29,7 +29,7 @@ These decisions are settled and replace the earlier open questions.
 | AWS account and region | Managed by `stevenclarke-infrastructure`. Portfolio resources deploy to `us-east-2` (primary), with ACM certificates for CloudFront in `us-east-1`. |
 | Hosting budget | No more than $10/month, excluding domain registration. Analytics and optional services must fit within this budget. |
 | Framework | Astro + TypeScript + Tailwind CSS, static output by default. |
-| Content workflow | Steven writes Markdown/MDX directly in the repository. No CMS. |
+| Content workflow | Steven writes Markdown content collections directly in the repository (typed frontmatter, no CMS). |
 | Target role | Senior software engineer. |
 | Target companies | Industry and company size are still open. Keep positioning broad rather than narrowing prematurely. |
 | Location | Open to relocation to Austin, TX, Seattle, WA, or Asheville, NC, or remote work from those locations. |
@@ -113,32 +113,43 @@ These should emphasize Steven's personal contribution, technical decisions, cons
 
 ## 6. Content Model
 
-Each project should be an MDX file with typed frontmatter:
+Each project is a Markdown file (`src/content/projects/<slug>.md`) with typed frontmatter,
+registered in `src/content.config.ts`. Markdown is sufficient for the narrative, tables, and
+lists; MDX can be adopted later if a case study needs embedded components.
 
 ```yaml
 title: string
 summary: string
 role: string
 timeline: string
-status: "live" | "archived" | "case-study"
+status: "live" | "in-progress" | "archived" | "case-study"
+statusNote?: string
+tag: string
 featured: boolean
+order: number
 technologies: string[]
 sourceUrl?: string
 demoUrl?: string
-appStoreUrl?: string
-coverImage: string
-gallery?: string[]
+demoNote?: string
+architectureUrl?: string
+architectureLabel?: string
+architectureNote?: string
+coverImage?: string
+gallery: string[]
 confidential: boolean
+draft: boolean
+progress?: { completed: number, total: number }
+lastUpdated?: date
 ```
 
 Site-wide content:
 
-- Name, headline, target role, and location/remote preference.
-- Short bio and longer about page.
+- `src/data/site.ts` — name, headline, target role, location/remote preference, navigation,
+  public email, LinkedIn, GitHub, availability statement, and resume path.
+- `src/content/pages/<page>.md` (planned) — Home, About, and Contact prose.
 - Skills grouped by category (languages, frameworks, cloud, data, leadership).
 - Work history with outcomes, not just responsibilities.
 - Resume PDF.
-- Public email, LinkedIn, GitHub, and availability statement.
 - SEO metadata and Open Graph image per page.
 
 Content assets:
@@ -324,8 +335,13 @@ Phase 2 fixes discovered while proving the scaffolding:
 
 - [ ] Write the final positioning statement and About page.
 - [ ] Complete the four project write-ups and supporting media using the case-study template in `templates/project-case-study.md`.
-  - [x] Iron Altar case study drafted in `templates/drafts/iron-altar.md` and rendered at `src/pages/projects/iron-altar.astro` (status, problem, approach, development plan, challenges, tradeoffs, lessons, evidence).
-- [ ] Adopt the MDX content model from Section 6, or update the plan to reflect the current hardcoded `.astro` pages.
+  - [x] Content pipeline: Markdown content collections with typed frontmatter (`src/content.config.ts`), rendered through `src/layouts/ProjectLayout.astro` and the dynamic `src/pages/projects/[slug].astro` route; shared identity/navigation values centralized in `src/data/site.ts`.
+  - [x] Iron Altar migrated to `src/content/projects/iron-altar.md`; the bespoke `src/pages/projects/iron-altar.astro` page and the intermediate `templates/drafts/iron-altar.md` were removed. The case-study template was updated to the new schema.
+  - [ ] Migrate Squat Monster, Media Inspector, and Portfolio Website into `src/content/projects/`; generate the `/projects` index and Home cards from the collection.
+  - [ ] Move Home, About, and Contact prose into `src/content/pages/*.md` and render them through the same pipeline.
+  - [ ] Enable draft previews (`PUBLIC_SHOW_DRAFTS=true` in the preview workflow) with a visible Draft badge; exclude drafts from production builds.
+  - [ ] Add `npm run new:project` and `npm run promote` helpers, `format:check` in CI, and document the workflow in `README.md` and `AGENTS.md`.
+- [x] Adopt a Markdown content-collection model (supersedes the earlier MDX proposal in Section 6); keep Section 6 in sync with the implementation.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
 - [ ] Create and optimize screenshots, diagrams, and Open Graph images.
 - [ ] Add SEO metadata, sitemap, robots.txt, structured data, and per-page Open Graph images.
@@ -333,6 +349,60 @@ Phase 2 fixes discovered while proving the scaffolding:
 - [ ] Accessibility audit and WCAG 2.2 AA fixes against the final content.
 - [ ] Lighthouse performance, accessibility, best-practices, and SEO checks on final content.
 - [ ] Test with 1–2 people who match the target audience and incorporate feedback.
+
+#### Content pipeline (Phase 4)
+
+Source of truth:
+
+- `src/content/projects/<slug>.md` — one Markdown file per project. Frontmatter holds the
+  structured fields that drive the UI (`title`, `summary`, `role`, `timeline`, `status`,
+  `statusNote`, `tag`, `featured`, `order`, `technologies`, links, `progress`, `lastUpdated`,
+  `draft`). The body holds the narrative and Markdown tables.
+- `src/content/pages/<page>.md` — one Markdown file per site page (Home, About, Contact);
+  introduced in a follow-up PR.
+- `src/data/site.ts` — shared identity, navigation, contact links, availability, and resume
+  path used by the layout and pages.
+- `templates/project-case-study.md` — canonical template for new project entries; copy it to
+  `src/content/projects/<slug>.md`.
+
+Rendering:
+
+1. `src/content.config.ts` registers the `projects` collection with the `glob` loader and a
+   Zod schema. `astro check` and `npm run build` validate every entry. `tsconfig.json` must
+   not exclude `.astro`, otherwise TypeScript cannot load the generated collection types and
+   the dynamic route and layout silently fall back to `any`.
+2. `src/pages/projects/[slug].astro` calls `getStaticPaths`, filters drafts unless
+   `PUBLIC_SHOW_DRAFTS=true`, and renders the entry body with `render(entry)`.
+3. `src/layouts/ProjectLayout.astro` owns the shared header, status panel and progress bar
+   (from `progress`), evidence cards (from the link fields), draft badge, and back link.
+4. `src/styles/global.css` styles the rendered Markdown through the `.project-prose` layer.
+5. The resulting URL is `/projects/<slug>` from the filename, so existing links are stable.
+
+Promotion:
+
+1. Copy `templates/project-case-study.md` to `src/content/projects/<slug>.md` (or later use
+   `npm run new:project -- <slug>`) and fill in the frontmatter and body with `draft: true`.
+2. Edit and preview locally with `npm run dev`; drafts render in development.
+3. Commit to a branch and run the preview deploy. The preview build sets
+   `PUBLIC_SHOW_DRAFTS=true`, renders draft entries, and shows a "Draft — preview only" badge.
+4. Review on `portfolio-preview.stevenclarke.dev`, then set `draft: false`, update
+   `lastUpdated`, and merge to `main`. The production build excludes drafts.
+5. Keep NDA/confidential drafts out of this public repository until they are approved.
+
+Verification:
+
+- `npm run format`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run links`.
+- Confirm the build produces `/projects/<slug>/index.html` and that the preview matches the
+  previous bespoke page before merging.
+- Astro's sitemap integration picks up the generated routes automatically.
+
+Remaining work:
+
+- Migrate the other three project pages and derive `/projects` and Home cards from the
+  collection.
+- Move Home, About, and Contact prose into `src/content/pages/`.
+- Add draft preview support, scaffolding/promotion scripts, `format:check` in CI, and
+  workflow documentation.
 
 ### Phase 5: Post-launch housekeeping — Not started
 
@@ -464,8 +534,10 @@ writing content but must be closed before the relevant phase.
    every page via `.github/scripts/add-noindex.mjs`.
 6. [x] **Lint/format/typecheck** — ESLint (`npm run lint`), Prettier (`npm run format` /
    `format:check`), and `astro check` (`npm run typecheck`) are configured and pass.
-7. [ ] **Content model** — pages are hardcoded `.astro` files rather than the MDX content
-   collection with typed frontmatter described in Section 6. Resolve post-launch (Phase 4).
+7. [x] **Content model** — project case studies now use a Markdown content collection with
+   typed frontmatter (`src/content.config.ts`) rendered through `ProjectLayout` and a dynamic
+   `[slug]` route. Remaining Phase 4 work: migrate the other three projects and move the
+   Home/About/Contact pages onto the same pipeline (see Section 6 and Phase 4).
 8. [x] **Repository publication** — `steventclarke/portfolio` is published (public).
 9. [ ] **Platform prerequisites (before production deploy)** — the SSM parameters and
    `portfolio-deploy-preview`/`portfolio-deploy-prod` roles are published, the GitHub

@@ -1,0 +1,229 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+  showDraftBadge?: boolean;
+}
+
+const { entry, showDraftBadge = false } = Astro.props;
+const {
+  title,
+  summary,
+  role,
+  timeline,
+  status,
+  statusNote,
+  sourceUrl,
+  demoUrl,
+  demoNote,
+  architectureUrl,
+  architectureLabel,
+  architectureNote,
+  progress,
+  lastUpdated,
+} = entry.data;
+
+const statusLabels = {
+  live: 'Live',
+  'in-progress': 'In progress',
+  archived: 'Archived',
+  'case-study': 'Case study',
+} as const;
+
+const statusStyles = {
+  live: 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300',
+  'in-progress': 'bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200',
+  archived: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+  'case-study': 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300',
+} as const;
+
+const statusLabel = statusLabels[status];
+const progressPercent = progress
+  ? Math.min(100, Math.round((progress.completed / progress.total) * 100))
+  : 0;
+const lastUpdatedLabel = lastUpdated?.toISOString().slice(0, 10);
+const linkLabel = (url: string) => url.replace(/^https?:\/\//, '');
+---
+
+<BaseLayout title={title} description={summary}>
+  <article class="space-y-16">
+    <header class="space-y-6">
+      <div class="flex flex-wrap items-center gap-3 text-sm font-medium tracking-[0.3em] text-teal-600 uppercase dark:text-teal-400">
+        <span>Case study</span>
+        <span aria-hidden="true" class="text-slate-400 dark:text-slate-600">
+          /
+        </span>
+        <span>{statusLabel}</span>
+        {showDraftBadge && (
+          <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium tracking-normal text-amber-900 normal-case dark:bg-amber-900/40 dark:text-amber-200">
+            Draft — preview only
+          </span>
+        )}
+      </div>
+      <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">{title}</h1>
+      <p class="max-w-3xl text-lg text-slate-600 dark:text-slate-300">{summary}</p>
+      <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600 dark:text-slate-400">
+        <span>
+          <strong class="text-slate-900 dark:text-slate-100">Role:</strong>
+          {role}
+        </span>
+        <span>
+          <strong class="text-slate-900 dark:text-slate-100">Timeline:</strong>
+          {timeline}
+        </span>
+        <span>
+          <strong class="text-slate-900 dark:text-slate-100">Status:</strong>
+          <span
+            class:list={['ml-1 rounded-full px-3 py-1 text-xs font-medium', statusStyles[status]]}
+          >
+            {statusLabel}
+          </span>
+        </span>
+      </div>
+      {(sourceUrl || demoUrl || demoNote) && (
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          {sourceUrl && (
+            <a
+              class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400"
+              href={sourceUrl}
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          )}
+          {demoUrl ? (
+            <a
+              class="rounded-full border border-slate-300 px-4 py-1 transition hover:border-teal-600 hover:text-teal-600 dark:border-slate-700 dark:hover:border-teal-400 dark:hover:text-teal-400"
+              href={demoUrl}
+              rel="noopener noreferrer"
+            >
+              Demo
+            </a>
+          ) : (
+            demoNote && <span class="text-slate-500 dark:text-slate-400">{demoNote}</span>
+          )}
+        </div>
+      )}
+    </header>
+
+    {progress && (
+      <section
+        aria-labelledby="status-heading"
+        class="rounded-3xl border border-slate-200 p-6 sm:p-8 dark:border-slate-800"
+      >
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div class="space-y-2">
+            <h2 id="status-heading" class="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Status
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300">{statusNote ?? statusLabel}.</p>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            <span class="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+              {progress.completed}
+            </span>
+            / {progress.total} phases complete
+          </p>
+        </div>
+        <div
+          class="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800"
+          role="progressbar"
+          aria-label={`${title} development plan progress`}
+          aria-valuenow={progress.completed}
+          aria-valuemin="0"
+          aria-valuemax={progress.total}
+        >
+          <div
+            class="h-full rounded-full bg-teal-600 dark:bg-teal-400"
+            style={`width: ${progressPercent}%`}
+          ></div>
+        </div>
+        {lastUpdatedLabel && (
+          <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+            Last updated {lastUpdatedLabel}. The phase-by-phase plan is below.
+          </p>
+        )}
+      </section>
+    )}
+
+    <div class="project-prose">
+      <slot />
+    </div>
+
+    {(sourceUrl || demoUrl || demoNote || architectureUrl) && (
+      <section aria-labelledby="evidence-heading" class="space-y-4">
+        <h2 id="evidence-heading" class="text-2xl font-semibold tracking-tight sm:text-3xl">
+          Evidence
+        </h2>
+        <dl class="grid gap-4 sm:grid-cols-2">
+          {sourceUrl && (
+            <div class="rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+              <dt class="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase dark:text-slate-400">
+                Source
+              </dt>
+              <dd class="mt-2 text-lg">
+                <a
+                  class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                  href={sourceUrl}
+                  rel="noopener noreferrer"
+                >
+                  {linkLabel(sourceUrl)}
+                </a>
+              </dd>
+            </div>
+          )}
+          {(demoUrl || demoNote) && (
+            <div class="rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
+              <dt class="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase dark:text-slate-400">
+                Live demo
+              </dt>
+              <dd class="mt-2 text-slate-600 dark:text-slate-300">
+                {demoUrl ? (
+                  <a
+                    class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                    href={demoUrl}
+                    rel="noopener noreferrer"
+                  >
+                    {linkLabel(demoUrl)}
+                  </a>
+                ) : (
+                  demoNote
+                )}
+              </dd>
+            </div>
+          )}
+          {(architectureUrl || architectureNote) && (
+            <div class="rounded-2xl border border-slate-200 p-6 sm:col-span-2 dark:border-slate-800">
+              <dt class="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase dark:text-slate-400">
+                Architecture and design notes
+              </dt>
+              <dd class="mt-2 text-slate-600 dark:text-slate-300">
+                {architectureNote && <>{architectureNote} </>}
+                {architectureUrl && (
+                  <a
+                    class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                    href={architectureUrl}
+                    rel="noopener noreferrer"
+                  >
+                    {architectureLabel}
+                  </a>
+                )}
+              </dd>
+            </div>
+          )}
+        </dl>
+      </section>
+    )}
+
+    <nav class="border-t border-slate-200 pt-6 dark:border-slate-800" aria-label="Case study">
+      <a
+        class="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+        href="/projects"
+      >
+        ← Back to projects
+      </a>
+    </nav>
+  </article>
+</BaseLayout>
