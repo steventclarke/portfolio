@@ -1,48 +1,32 @@
 ---
-# Working draft for a project case study. Frontmatter matches the content model
-# in plan.md (Section 6) so this can move to MDX later without restructuring.
+# Working draft for a project case study.
+# Copy this file to src/content/projects/<slug>.md; the frontmatter is validated
+# by src/content.config.ts and drives the shared ProjectLayout (title, metadata,
+# status panel, progress bar, evidence cards). The Markdown body is the narrative.
 title: TBD
 summary: TBD
 role: TBD
 timeline: TBD
 status: 'in-progress' # live | in-progress | archived | case-study
+statusNote: TBD
+tag: TBD
 featured: false
+order: 0
 technologies: []
-sourceUrl: ''
-demoUrl: ''
-appStoreUrl: ''
-coverImage: ''
+# sourceUrl: https://github.com/...
+# demoUrl: https://...
+# demoNote: Demo ships with Phase X (hostname or current status).
+# architectureUrl: https://...
+# architectureLabel: Architecture notes
+# architectureNote: TBD
+# coverImage: /images/...
 gallery: []
 confidential: false
-
-# Case-study tracking. These fields drive the Status section below.
-planStatus: 'in-progress' # not-started | in-progress | blocked | complete
-currentPhase: 1
-totalPhases: 1
-lastUpdated: 'YYYY-MM-DD'
----
-
-# Project Name
-
-> One-line summary: what this is, who it is for, and where it stands today.
-
-**Role:** TBD · **Timeline:** TBD · **Status:** In progress
-
----
-
-## Status
-
-**Overall:** In progress — Phase 1 of 1: _Phase name_
-**Last updated:** YYYY-MM-DD
-
-Progress: `1 / 1 phases complete`
-
-Status values: **Not started** · **In progress** · **Blocked** · **Complete**
-
-> Guidance: keep this section short. The phase-by-phase detail lives in
-> [Development Plan](#3-development-plan). Update `currentPhase`, `totalPhases`,
-> `planStatus`, and `lastUpdated` in the frontmatter whenever this changes.
-
+draft: true
+progressCompleted: 0
+progressTotal: 1
+# Obsidian's Templates plugin replaces {{date}}; replace it manually when copying.
+lastUpdated: '{{date}}'
 ---
 
 ## 1. Problem Statement
@@ -80,17 +64,17 @@ TBD — What is the cost of leaving it unsolved? (Time, money, quality, risk, fr
 
 TBD — Two or three sentences describing the strategy and why you chose it.
 
-### 2.a Technology Choices
+### 2.a Technology choices
 
 | Choice | Why this | Alternatives considered | Tradeoff |
-| --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD |
-| TBD | TBD | TBD | TBD |
+| ------ | -------- | ----------------------- | -------- |
+| TBD    | TBD      | TBD                     | TBD      |
+| TBD    | TBD      | TBD                     | TBD      |
 
 > Guidance: prefer decisions you can defend in an interview. Note what you did
 > not choose and why, not just what you did.
 
-### 2.b Development Workflow
+### 2.b Development workflow
 
 TBD — How did you plan, build, test, and ship?
 
@@ -104,15 +88,15 @@ TBD — How did you plan, build, test, and ship?
 
 ## 3. Development Plan
 
-> Guidance: this is the source of truth for progress. Keep the table in sync with
-> the Status section and use the same phase names.
+> Guidance: this is the source of truth for progress. Keep the table and the
+> `progressCompleted`/`progressTotal` frontmatter in sync and use the same phase names.
 
-| # | Phase | Scope | Done when | Status |
-| --- | --- | --- | --- | --- |
-| 1 | Discovery and requirements | TBD | TBD | Not started |
-| 2 | Design and architecture | TBD | TBD | Not started |
-| 3 | Build and integrate | TBD | TBD | Not started |
-| 4 | Test, harden, and ship | TBD | TBD | Not started |
+| #   | Phase                      | Scope | Done when | Status      |
+| --- | -------------------------- | ----- | --------- | ----------- |
+| 1   | Discovery and requirements | TBD   | TBD       | Not started |
+| 2   | Design and architecture    | TBD   | TBD       | Not started |
+| 3   | Build and integrate        | TBD   | TBD       | Not started |
+| 4   | Test, harden, and ship     | TBD   | TBD       | Not started |
 
 ### Phase detail
 
@@ -157,8 +141,8 @@ TBD — How did you plan, build, test, and ship?
 ### Key tradeoffs
 
 | Decision | What it bought | What it cost |
-| --- | --- | --- |
-| TBD | TBD | TBD |
+| -------- | -------------- | ------------ |
+| TBD      | TBD            | TBD          |
 
 ### What I would do differently
 
@@ -168,14 +152,6 @@ TBD — How did you plan, build, test, and ship?
 
 - TBD
 
----
-
-## Evidence
-
-> Guidance: link to source, demo, screenshots, or video. Remove any item that does
-> not apply. Keep NDA material out unless it has been reviewed and approved.
-
-- **Source:** TBD
-- **Demo / app:** TBD
-- **Screenshots / video:** TBD
-- **Architecture / design notes:** TBD
+> Evidence (source, demo, architecture notes) is rendered by `ProjectLayout`
+> from the frontmatter. Do not repeat it in the body. Keep NDA material out
+> unless it has been reviewed and approved.
