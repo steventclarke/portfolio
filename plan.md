@@ -337,7 +337,7 @@ Phase 2 fixes discovered while proving the scaffolding:
 - [ ] Write the final positioning statement and About page.
 - [ ] Complete the four project write-ups and supporting media using the case-study template in `src/content/_templates/project-case-study.md`.
   - [x] Content pipeline: Markdown content collections with typed frontmatter (`src/content.config.ts`), rendered through `src/layouts/ProjectLayout.astro` and the dynamic `src/pages/projects/[slug].astro` route; shared identity/navigation values centralized in `src/data/site.ts`.
-  - [x] Iron Altar migrated to `src/content/projects/iron-altar.md`; the bespoke `src/pages/projects/iron-altar.astro` page and the intermediate `templates/drafts/iron-altar.md` were removed. The case-study template was updated to the new schema.
+  - [x] Iron Altar migrated to `src/content/projects/iron-altar.md`; the bespoke `src/pages/projects/iron-altar.astro` page and the intermediate `templates/drafts/iron-altar.md` were removed. The case-study template was updated to the new schema. The write-up was later rewritten end-to-end using the Obsidian vault workflow.
   - [x] Obsidian authoring setup: `src/content` is the vault, the template lives in `src/content/_templates/`, frontmatter is edited through Properties, and the workflow is documented in `docs/obsidian.md`.
   - [x] Local draft previews (`PUBLIC_SHOW_DRAFTS=true`) with a visible Draft badge; production builds exclude drafts.
   - [ ] Set `PUBLIC_SHOW_DRAFTS=true` in the preview deployment workflow.
