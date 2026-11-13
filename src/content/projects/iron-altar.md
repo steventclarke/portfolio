@@ -24,9 +24,8 @@ demoNote: Live web demo ships with Phase 7 — iron-altar.stevenclarke.dev (P7.1
 architectureUrl: https://github.com/steventclarke/iron-altar/blob/main/plan.md
 architectureLabel: Iron Altar build plan
 architectureNote: Sections 2–3 of the build plan cover the architecture and data model. Screenshots and a short demo video will be added once the web build is hosted.
-progress:
-  completed: 7
-  total: 8
+progressCompleted: 7
+progressTotal: 8
 lastUpdated: 2026-11-10
 draft: false
 ---

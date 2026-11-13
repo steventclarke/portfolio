@@ -14,7 +14,10 @@ both a `preview` and a `prod` environment.
 
 - [spec.md](./spec.md) - Original specification
 - [plan.md](./plan.md) - Implementation plan, phases, decisions, and status
+- [docs/obsidian.md](./docs/obsidian.md) - Authoring case studies in Obsidian
 - `src/` - Astro pages, layouts, styles
+- `src/content/projects/` - Markdown case studies (Astro content collection)
+- `src/content/_templates/` - Obsidian case-study template
 - `public/` - Static assets (headshot, resume PDF, favicon, robots.txt, 404)
 - `infrastructure/cdk/` - Application CDK stack (S3, CloudFront, DNS records)
 - `.github/workflows/` - CI/CD workflows
@@ -66,6 +69,20 @@ live in `us-east-1`.
 4. Format: `npm run format` (check with `npm run format:check`)
 5. Typecheck: `npm run typecheck`
 6. Build: `npm run build`
+
+## Writing content (Obsidian)
+
+Case studies are Markdown files in `src/content/projects/`. Open **`src/content`** as an
+Obsidian vault, create a note from `_templates/project-case-study.md`, and use the
+Properties panel for frontmatter. Drafts preview with:
+
+```bash
+PUBLIC_SHOW_DRAFTS=true npm run dev
+```
+
+Local Obsidian settings, the trash folder, and pasted attachments are gitignored. See
+[docs/obsidian.md](./docs/obsidian.md) for vault settings, the frontmatter reference,
+content guardrails, and troubleshooting.
 
 ## Application infrastructure (CDK)
 

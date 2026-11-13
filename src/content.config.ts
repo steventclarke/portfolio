@@ -25,12 +25,8 @@ const projects = defineCollection({
     gallery: z.array(z.string()).default([]),
     confidential: z.boolean().default(false),
     draft: z.boolean().default(false),
-    progress: z
-      .object({
-        completed: z.number().int().nonnegative(),
-        total: z.number().int().positive(),
-      })
-      .optional(),
+    progressCompleted: z.number().int().nonnegative().optional(),
+    progressTotal: z.number().int().positive().optional(),
     lastUpdated: z.coerce.date().optional(),
   }),
 });

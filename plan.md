@@ -138,7 +138,8 @@ coverImage?: string
 gallery: string[]
 confidential: boolean
 draft: boolean
-progress?: { completed: number, total: number }
+progressCompleted?: number
+progressTotal?: number
 lastUpdated?: date
 ```
 
@@ -334,13 +335,15 @@ Phase 2 fixes discovered while proving the scaffolding:
 ### Phase 4: Content (post-launch) — In progress
 
 - [ ] Write the final positioning statement and About page.
-- [ ] Complete the four project write-ups and supporting media using the case-study template in `templates/project-case-study.md`.
+- [ ] Complete the four project write-ups and supporting media using the case-study template in `src/content/_templates/project-case-study.md`.
   - [x] Content pipeline: Markdown content collections with typed frontmatter (`src/content.config.ts`), rendered through `src/layouts/ProjectLayout.astro` and the dynamic `src/pages/projects/[slug].astro` route; shared identity/navigation values centralized in `src/data/site.ts`.
   - [x] Iron Altar migrated to `src/content/projects/iron-altar.md`; the bespoke `src/pages/projects/iron-altar.astro` page and the intermediate `templates/drafts/iron-altar.md` were removed. The case-study template was updated to the new schema.
+  - [x] Obsidian authoring setup: `src/content` is the vault, the template lives in `src/content/_templates/`, frontmatter is edited through Properties, and the workflow is documented in `docs/obsidian.md`.
+  - [x] Local draft previews (`PUBLIC_SHOW_DRAFTS=true`) with a visible Draft badge; production builds exclude drafts.
+  - [ ] Set `PUBLIC_SHOW_DRAFTS=true` in the preview deployment workflow.
   - [ ] Migrate Squat Monster, Media Inspector, and Portfolio Website into `src/content/projects/`; generate the `/projects` index and Home cards from the collection.
   - [ ] Move Home, About, and Contact prose into `src/content/pages/*.md` and render them through the same pipeline.
-  - [ ] Enable draft previews (`PUBLIC_SHOW_DRAFTS=true` in the preview workflow) with a visible Draft badge; exclude drafts from production builds.
-  - [ ] Add `npm run new:project` and `npm run promote` helpers, `format:check` in CI, and document the workflow in `README.md` and `AGENTS.md`.
+  - [ ] Add `npm run new:project` and `npm run promote` helpers and `format:check` in CI; document the remaining authoring workflow in `README.md` and `AGENTS.md`.
 - [x] Adopt a Markdown content-collection model (supersedes the earlier MDX proposal in Section 6); keep Section 6 in sync with the implementation.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
 - [ ] Create and optimize screenshots, diagrams, and Open Graph images.
@@ -356,14 +359,17 @@ Source of truth:
 
 - `src/content/projects/<slug>.md` — one Markdown file per project. Frontmatter holds the
   structured fields that drive the UI (`title`, `summary`, `role`, `timeline`, `status`,
-  `statusNote`, `tag`, `featured`, `order`, `technologies`, links, `progress`, `lastUpdated`,
-  `draft`). The body holds the narrative and Markdown tables.
+  `statusNote`, `tag`, `featured`, `order`, `technologies`, links, `progressCompleted`,
+  `progressTotal`, `lastUpdated`, `draft`). The body holds the narrative and Markdown tables.
 - `src/content/pages/<page>.md` — one Markdown file per site page (Home, About, Contact);
   introduced in a follow-up PR.
 - `src/data/site.ts` — shared identity, navigation, contact links, availability, and resume
   path used by the layout and pages.
-- `templates/project-case-study.md` — canonical template for new project entries; copy it to
+- `src/content/_templates/project-case-study.md` — canonical template for new project
+  entries, used by Obsidian's core Templates plugin; copy it to
   `src/content/projects/<slug>.md`.
+- `docs/obsidian.md` — local authoring setup, frontmatter reference, guardrails, and
+  troubleshooting.
 
 Rendering:
 
@@ -374,17 +380,28 @@ Rendering:
 2. `src/pages/projects/[slug].astro` calls `getStaticPaths`, filters drafts unless
    `PUBLIC_SHOW_DRAFTS=true`, and renders the entry body with `render(entry)`.
 3. `src/layouts/ProjectLayout.astro` owns the shared header, status panel and progress bar
-   (from `progress`), evidence cards (from the link fields), draft badge, and back link.
+   (derived from `progressCompleted`/`progressTotal`), evidence cards (from the link fields),
+   draft badge, and back link.
 4. `src/styles/global.css` styles the rendered Markdown through the `.project-prose` layer.
 5. The resulting URL is `/projects/<slug>` from the filename, so existing links are stable.
 
+Local editing:
+
+1. Open `src/content` as an Obsidian vault (not the repository root).
+2. Create a note in `projects/`, insert the template from `_templates/`, and fill the
+   frontmatter through Properties. `lastUpdated` uses the template's `{{date}}` variable.
+3. Keep `draft: true` and preview with `PUBLIC_SHOW_DRAFTS=true npm run dev`.
+4. See `docs/obsidian.md` for settings, optional plugins, guardrails, and troubleshooting.
+
 Promotion:
 
-1. Copy `templates/project-case-study.md` to `src/content/projects/<slug>.md` (or later use
-   `npm run new:project -- <slug>`) and fill in the frontmatter and body with `draft: true`.
-2. Edit and preview locally with `npm run dev`; drafts render in development.
-3. Commit to a branch and run the preview deploy. The preview build sets
-   `PUBLIC_SHOW_DRAFTS=true`, renders draft entries, and shows a "Draft — preview only" badge.
+1. Copy `src/content/_templates/project-case-study.md` to
+   `src/content/projects/<slug>.md` (or later use `npm run new:project -- <slug>`) and fill
+   in the frontmatter and body with `draft: true`.
+2. Edit and preview locally with `PUBLIC_SHOW_DRAFTS=true npm run dev`; drafts render with a
+   badge.
+3. Commit to a branch and run the preview deploy. Once the preview workflow sets
+   `PUBLIC_SHOW_DRAFTS=true`, draft entries render with a "Draft — preview only" badge.
 4. Review on `portfolio-preview.stevenclarke.dev`, then set `draft: false`, update
    `lastUpdated`, and merge to `main`. The production build excludes drafts.
 5. Keep NDA/confidential drafts out of this public repository until they are approved.
@@ -401,8 +418,9 @@ Remaining work:
 - Migrate the other three project pages and derive `/projects` and Home cards from the
   collection.
 - Move Home, About, and Contact prose into `src/content/pages/`.
-- Add draft preview support, scaffolding/promotion scripts, `format:check` in CI, and
-  workflow documentation.
+- Set `PUBLIC_SHOW_DRAFTS=true` in the preview deployment workflow.
+- Add scaffolding/promotion scripts and `format:check` in CI. Authoring documentation is in
+  `docs/obsidian.md`.
 
 ### Phase 5: Post-launch housekeeping — Not started
 
@@ -536,8 +554,10 @@ writing content but must be closed before the relevant phase.
    `format:check`), and `astro check` (`npm run typecheck`) are configured and pass.
 7. [x] **Content model** — project case studies now use a Markdown content collection with
    typed frontmatter (`src/content.config.ts`) rendered through `ProjectLayout` and a dynamic
-   `[slug]` route. Remaining Phase 4 work: migrate the other three projects and move the
-   Home/About/Contact pages onto the same pipeline (see Section 6 and Phase 4).
+   `[slug]` route; Obsidian authoring is documented in `docs/obsidian.md`. Remaining Phase 4
+   work: migrate the other three projects, set `PUBLIC_SHOW_DRAFTS=true` in the preview
+   workflow, and move the Home/About/Contact pages onto the same pipeline (see Section 6 and
+   Phase 4).
 8. [x] **Repository publication** — `steventclarke/portfolio` is published (public).
 9. [ ] **Platform prerequisites (before production deploy)** — the SSM parameters and
    `portfolio-deploy-preview`/`portfolio-deploy-prod` roles are published, the GitHub

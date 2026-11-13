@@ -23,10 +23,10 @@ technologies: []
 gallery: []
 confidential: false
 draft: true
-progress:
-  completed: 0
-  total: 1
-lastUpdated: 'YYYY-MM-DD'
+progressCompleted: 0
+progressTotal: 1
+# Obsidian's Templates plugin replaces {{date}}; replace it manually when copying.
+lastUpdated: '{{date}}'
 ---
 
 ## 1. Problem Statement
@@ -67,9 +67,9 @@ TBD — Two or three sentences describing the strategy and why you chose it.
 ### 2.a Technology choices
 
 | Choice | Why this | Alternatives considered | Tradeoff |
-| --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD |
-| TBD | TBD | TBD | TBD |
+| ------ | -------- | ----------------------- | -------- |
+| TBD    | TBD      | TBD                     | TBD      |
+| TBD    | TBD      | TBD                     | TBD      |
 
 > Guidance: prefer decisions you can defend in an interview. Note what you did
 > not choose and why, not just what you did.
@@ -89,14 +89,14 @@ TBD — How did you plan, build, test, and ship?
 ## 3. Development Plan
 
 > Guidance: this is the source of truth for progress. Keep the table and the
-> `progress` frontmatter in sync and use the same phase names.
+> `progressCompleted`/`progressTotal` frontmatter in sync and use the same phase names.
 
-| # | Phase | Scope | Done when | Status |
-| --- | --- | --- | --- | --- |
-| 1 | Discovery and requirements | TBD | TBD | Not started |
-| 2 | Design and architecture | TBD | TBD | Not started |
-| 3 | Build and integrate | TBD | TBD | Not started |
-| 4 | Test, harden, and ship | TBD | TBD | Not started |
+| #   | Phase                      | Scope | Done when | Status      |
+| --- | -------------------------- | ----- | --------- | ----------- |
+| 1   | Discovery and requirements | TBD   | TBD       | Not started |
+| 2   | Design and architecture    | TBD   | TBD       | Not started |
+| 3   | Build and integrate        | TBD   | TBD       | Not started |
+| 4   | Test, harden, and ship     | TBD   | TBD       | Not started |
 
 ### Phase detail
 
@@ -141,8 +141,8 @@ TBD — How did you plan, build, test, and ship?
 ### Key tradeoffs
 
 | Decision | What it bought | What it cost |
-| --- | --- | --- |
-| TBD | TBD | TBD |
+| -------- | -------------- | ------------ |
+| TBD      | TBD            | TBD          |
 
 ### What I would do differently
 

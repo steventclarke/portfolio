@@ -7,3 +7,6 @@ infrastructure/cdk/dist
 infrastructure/cdk/cdk.out
 *.md
 !src/content/**/*.md
+src/content/.obsidian/
+src/content/.trash/
+src/content/_attachments/

@@ -21,7 +21,8 @@ const {
   architectureUrl,
   architectureLabel,
   architectureNote,
-  progress,
+  progressCompleted,
+  progressTotal,
   lastUpdated,
 } = entry.data;
 
@@ -40,6 +41,10 @@ const statusStyles = {
 } as const;
 
 const statusLabel = statusLabels[status];
+const progress =
+  progressCompleted !== undefined && progressTotal !== undefined
+    ? { completed: progressCompleted, total: progressTotal }
+    : undefined;
 const progressPercent = progress
   ? Math.min(100, Math.round((progress.completed / progress.total) * 100))
   : 0;
