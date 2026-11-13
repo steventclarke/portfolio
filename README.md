@@ -14,10 +14,11 @@ both a `preview` and a `prod` environment.
 
 - [spec.md](./spec.md) - Original specification
 - [plan.md](./plan.md) - Implementation plan, phases, decisions, and status
-- [docs/obsidian.md](./docs/obsidian.md) - Authoring case studies in Obsidian
+- [docs/obsidian.md](./docs/obsidian.md) - Authoring case studies and pages in Obsidian
 - `src/` - Astro pages, layouts, styles
 - `src/content/projects/` - Markdown case studies (Astro content collection)
-- `src/content/_templates/` - Obsidian case-study template
+- `src/content/pages/` - Markdown content for non-project pages
+- `src/content/_templates/` - Obsidian templates for projects and pages
 - `public/` - Static assets (headshot, resume PDF, favicon, robots.txt, 404)
 - `infrastructure/cdk/` - Application CDK stack (S3, CloudFront, DNS records)
 - `.github/workflows/` - CI/CD workflows
@@ -72,9 +73,10 @@ live in `us-east-1`.
 
 ## Writing content (Obsidian)
 
-Case studies are Markdown files in `src/content/projects/`. Open **`src/content`** as an
-Obsidian vault, create a note from `_templates/project-case-study.md`, and use the
-Properties panel for frontmatter. Drafts preview with:
+Case studies and non-project pages are Markdown files in `src/content/projects/` and
+`src/content/pages/`. Open **`src/content`** as an Obsidian vault, create notes from the
+templates in `_templates/`, and use the Properties panel for frontmatter. Draft case
+studies preview with:
 
 ```bash
 PUBLIC_SHOW_DRAFTS=true npm run dev

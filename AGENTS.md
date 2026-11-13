@@ -82,9 +82,9 @@ astro dev --background
 Manage the background server with `astro dev stop`, `astro dev status`, and
 `astro dev logs`.
 
-Case-study content is Markdown in `src/content/projects/`; `src/content` can be opened as
-an Obsidian vault. See `docs/obsidian.md` for the template, frontmatter reference, and
-content guardrails.
+Case-study content is Markdown in `src/content/projects/`; non-project page content is
+Markdown in `src/content/pages/`. `src/content` can be opened as an Obsidian vault. See
+`docs/obsidian.md` for templates, frontmatter references, and content guardrails.
 
 Full docs: https://docs.astro.build — consult these before working on related tasks:
 

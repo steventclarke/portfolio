@@ -143,11 +143,17 @@ progressTotal?: number
 lastUpdated?: date
 ```
 
+Non-project pages use `src/content/pages/<page>.md` with a typed hero (`title`,
+`description`, `noindex`, `eyebrow`, `heading`, `intro`, `image`, `ctas`), optional
+`sections`/`contacts`, and an optional Markdown body rendered after the structured content.
+
 Site-wide content:
 
-- `src/data/site.ts` — name, headline, target role, location/remote preference, navigation,
-  public email, LinkedIn, GitHub, availability statement, and resume path.
-- `src/content/pages/<page>.md` (planned) — Home, About, and Contact prose.
+- `src/data/site.ts` — site-wide identity, navigation, public email, LinkedIn, GitHub,
+  availability statement, and resume path. Page prose no longer lives here.
+- `src/content/pages/<page>.md` — one Markdown file per non-project page (`home`, `about`,
+  `contact`, `projects`, `404`). Typed frontmatter drives the hero, CTAs, sections, cards,
+  contacts, and metadata; an optional Markdown body renders after the structured sections.
 - Skills grouped by category (languages, frameworks, cloud, data, leadership).
 - Work history with outcomes, not just responsibilities.
 - Resume PDF.
@@ -155,7 +161,7 @@ Site-wide content:
 
 Content assets:
 
-- Available: headshot (`public/images/headshot.jpg`), resume PDF (`public/resume.pdf`), and contact links in `src/pages/contact.astro`.
+- Available: headshot (`public/images/headshot.jpg`), resume PDF (`public/resume.pdf`), and contact links in `src/content/pages/contact.md`.
 - Still needed: fill the `TBD` app-store, video, and key-technical-decision fields in the featured-project inventory.
 - Still needed: capture or verify screenshots and project architecture documents for each featured project.
 - Still needed: confirm repository URLs against the public GitHub account and confirm NDA approval status for each proposed case study.
@@ -242,17 +248,26 @@ Estimated cost at portfolio traffic levels: roughly $1–5/month for core hostin
 portfolio/
   src/
     components/
+      CtaLinks.astro
+      PageHero.astro
     layouts/
+    lib/
+      pages.ts
     pages/
+      404.astro
       index.astro
       about.astro
       contact.astro
       projects/
         index.astro
-        [...slug].astro
+        [slug].astro
     content/
+      _templates/
+        page.md
+        project-case-study.md
+      pages/
       projects/
-      config.ts
+    content.config.ts
     styles/
   public/
     images/
@@ -288,7 +303,7 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Inventory the four featured projects (status, repository, demo/app-store links, screenshots, video, architecture) — see [Featured Projects Inventory](#15-featured-projects-inventory).
 - [x] Identify what each project needs to be presentable at launch and flag not-ready items.
 - [x] Confirm NDA boundaries and the approval process for the three proposed case studies — see [NDA Case Studies Inventory](#16-nda-case-studies-inventory).
-- [x] Gather the headshot, resume PDF, public email, LinkedIn URL, and GitHub URL (`public/`, `src/pages/contact.astro`).
+- [x] Gather the headshot, resume PDF, public email, LinkedIn URL, and GitHub URL (`public/`, `src/content/pages/contact.md`).
 - [x] Decide the preview-subdomain name and analytics shortlist (`portfolio-preview.stevenclarke.dev`; analytics deferred for v1 on cost).
 
 ### Phase 1: Foundation (October 26–November 1) — In progress
@@ -342,7 +357,8 @@ Phase 2 fixes discovered while proving the scaffolding:
   - [x] Local draft previews (`PUBLIC_SHOW_DRAFTS=true`) with a visible Draft badge; production builds exclude drafts.
   - [ ] Set `PUBLIC_SHOW_DRAFTS=true` in the preview deployment workflow.
   - [ ] Migrate Squat Monster, Media Inspector, and Portfolio Website into `src/content/projects/`; generate the `/projects` index and Home cards from the collection.
-  - [ ] Move Home, About, and Contact prose into `src/content/pages/*.md` and render them through the same pipeline.
+  - [x] Move non-project page content into `src/content/pages/*.md` (`home`, `about`, `contact`, `projects`, `404`) and render it through typed frontmatter plus an optional Markdown body.
+  - [x] Add shared `PageHero` and `CtaLinks` components and a `src/content/_templates/page.md` authoring template.
   - [ ] Add `npm run new:project` and `npm run promote` helpers and `format:check` in CI; document the remaining authoring workflow in `README.md` and `AGENTS.md`.
 - [x] Adopt a Markdown content-collection model (supersedes the earlier MDX proposal in Section 6); keep Section 6 in sync with the implementation.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
@@ -361,37 +377,45 @@ Source of truth:
   structured fields that drive the UI (`title`, `summary`, `role`, `timeline`, `status`,
   `statusNote`, `tag`, `featured`, `order`, `technologies`, links, `progressCompleted`,
   `progressTotal`, `lastUpdated`, `draft`). The body holds the narrative and Markdown tables.
-- `src/content/pages/<page>.md` — one Markdown file per site page (Home, About, Contact);
-  introduced in a follow-up PR.
+- `src/content/pages/<page>.md` — one Markdown file per non-project page (`home`, `about`,
+  `contact`, `projects`, `404`). Frontmatter holds the hero, CTA, section, card, and contact
+  data; the optional Markdown body renders after the structured sections.
 - `src/data/site.ts` — shared identity, navigation, contact links, availability, and resume
   path used by the layout and pages.
 - `src/content/_templates/project-case-study.md` — canonical template for new project
   entries, used by Obsidian's core Templates plugin; copy it to
   `src/content/projects/<slug>.md`.
+- `src/content/_templates/page.md` — starter for a non-project page entry.
 - `docs/obsidian.md` — local authoring setup, frontmatter reference, guardrails, and
   troubleshooting.
 
 Rendering:
 
-1. `src/content.config.ts` registers the `projects` collection with the `glob` loader and a
-   Zod schema. `astro check` and `npm run build` validate every entry. `tsconfig.json` must
-   not exclude `.astro`, otherwise TypeScript cannot load the generated collection types and
-   the dynamic route and layout silently fall back to `any`.
+1. `src/content.config.ts` registers the `projects` and `pages` collections with the `glob`
+   loader and Zod schemas. `astro check` and `npm run build` validate every entry.
+   `tsconfig.json` must not exclude `.astro`, otherwise TypeScript cannot load the generated
+   collection types and the dynamic route and layout silently fall back to `any`.
 2. `src/pages/projects/[slug].astro` calls `getStaticPaths`, filters drafts unless
    `PUBLIC_SHOW_DRAFTS=true`, and renders the entry body with `render(entry)`.
 3. `src/layouts/ProjectLayout.astro` owns the shared header, status panel and progress bar
    (derived from `progressCompleted`/`progressTotal`), evidence cards (from the link fields),
    draft badge, and back link.
-4. `src/styles/global.css` styles the rendered Markdown through the `.project-prose` layer.
-5. The resulting URL is `/projects/<slug>` from the filename, so existing links are stable.
+4. `src/lib/pages.ts` loads a page entry by id and renders its optional Markdown body.
+   `src/components/PageHero.astro` and `src/components/CtaLinks.astro` render the shared hero
+   and CTA treatment; each page composes its sections from typed frontmatter.
+5. `src/styles/global.css` styles rendered Markdown through the `.project-prose` layer.
+6. The resulting project URL is `/projects/<slug>` from the filename, so existing links are
+   stable.
 
 Local editing:
 
 1. Open `src/content` as an Obsidian vault (not the repository root).
-2. Create a note in `projects/`, insert the template from `_templates/`, and fill the
-   frontmatter through Properties. `lastUpdated` uses the template's `{{date}}` variable.
-3. Keep `draft: true` and preview with `PUBLIC_SHOW_DRAFTS=true npm run dev`.
-4. See `docs/obsidian.md` for settings, optional plugins, guardrails, and troubleshooting.
+2. Create a note in `projects/` for a case study, or edit `pages/<page>.md` for a site page.
+   Insert the matching template from `_templates/` when creating a new entry.
+3. Case studies use `draft: true` and preview with `PUBLIC_SHOW_DRAFTS=true npm run dev`;
+   page entries are always part of the build.
+4. See `docs/obsidian.md` for settings, frontmatter references, optional plugins, guardrails,
+   and troubleshooting.
 
 Promotion:
 
@@ -416,8 +440,9 @@ Verification:
 Remaining work:
 
 - Migrate the other three project pages and derive `/projects` and Home cards from the
-  collection.
-- Move Home, About, and Contact prose into `src/content/pages/`.
+  collection instead of duplicating card data in page frontmatter.
+- Optionally move site chrome (site name, navigation, footer links) into a content entry if
+  it should be editable outside `src/data/site.ts`.
 - Set `PUBLIC_SHOW_DRAFTS=true` in the preview deployment workflow.
 - Add scaffolding/promotion scripts and `format:check` in CI. Authoring documentation is in
   `docs/obsidian.md`.
@@ -552,12 +577,13 @@ writing content but must be closed before the relevant phase.
    every page via `.github/scripts/add-noindex.mjs`.
 6. [x] **Lint/format/typecheck** — ESLint (`npm run lint`), Prettier (`npm run format` /
    `format:check`), and `astro check` (`npm run typecheck`) are configured and pass.
-7. [x] **Content model** — project case studies now use a Markdown content collection with
-   typed frontmatter (`src/content.config.ts`) rendered through `ProjectLayout` and a dynamic
-   `[slug]` route; Obsidian authoring is documented in `docs/obsidian.md`. Remaining Phase 4
-   work: migrate the other three projects, set `PUBLIC_SHOW_DRAFTS=true` in the preview
-   workflow, and move the Home/About/Contact pages onto the same pipeline (see Section 6 and
-   Phase 4).
+7. [x] **Content model** — project case studies use a Markdown content collection with typed
+   frontmatter rendered through `ProjectLayout` and a dynamic `[slug]` route. Home, About,
+   Contact, Projects index, and 404 content now use a `pages` Markdown collection rendered
+   through `PageHero`/`CtaLinks` and page-specific layouts; Obsidian authoring is documented
+   in `docs/obsidian.md`. Remaining Phase 4 work: migrate the other three projects, derive
+   project cards from the collection, set `PUBLIC_SHOW_DRAFTS=true` in the preview workflow,
+   and optionally move site chrome into content (see Section 6 and Phase 4).
 8. [x] **Repository publication** — `steventclarke/portfolio` is published (public).
 9. [ ] **Platform prerequisites (before production deploy)** — the SSM parameters and
    `portfolio-deploy-preview`/`portfolio-deploy-prod` roles are published, the GitHub
