@@ -346,7 +346,7 @@ Phase 2 fixes discovered while proving the scaffolding:
 
 ### Phase 3: Onboard the applications — Not started
 
-- [ ] Onboard Iron Altar, Squat Monster, and Media Inspector as tenant apps so their demo hostnames are live (`ironaltar.stevenclarke.dev`, `squatmonster.stevenclarke.dev`, `mediainspector.stevenclarke.dev`).
+- [ ] Onboard Iron Altar, Squat Monster, and Media Inspector as tenant apps so their demo hostnames are live (`iron-altar.stevenclarke.dev`, `squatmonster.stevenclarke.dev`, `mediainspector.stevenclarke.dev`).
 - [ ] Confirm the platform contract (SSM params, deploy roles, DNS/OAC pattern) generalizes across repositories; coordinate with `stevenclarke-infrastructure`.
 - [ ] Update the portfolio demo/app-store links to the live hosts.
 
@@ -522,7 +522,7 @@ studies.
 - **Iron Altar** — a strength-training application.
   - Current status: In progress.
   - Repository: https://github.com/steventclarke/iron-altar
-  - Demo: https://ironaltar.stevenclarke.dev
+  - Demo: https://iron-altar.stevenclarke.dev
   - App store: TBD
   - Screenshots: https://github.com/steventclarke/iron-altar/tree/main/screenshots
   - Video: TBD

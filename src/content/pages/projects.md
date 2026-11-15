@@ -13,7 +13,7 @@ card1LinkLabel: Case study
 card1Link1Label: GitHub
 card1Link1Href: https://github.com/steventclarke/iron-altar
 card1Link2Label: Demo
-card1Link2Href: https://ironaltar.stevenclarke.dev
+card1Link2Href: https://iron-altar.stevenclarke.dev
 card2Eyebrow: Computer vision
 card2Title: Squat Monster
 card2Body: Bar-path analysis using computer vision to analyze barbell lifts.
