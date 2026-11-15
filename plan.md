@@ -363,6 +363,7 @@ Phase 2 fixes discovered while proving the scaffolding:
   - [x] Move non-project page content into `src/content/pages/*.md` (`home`, `about`, `contact`, `projects`, `404`) and render it through typed frontmatter plus an optional Markdown body.
   - [x] Add shared `PageHero` and `CtaLinks` components and a `src/content/_templates/page.md` authoring template.
   - [x] Flatten page frontmatter into top-level numbered fields (`cta1*`, `section1*`, `card1*`, `contact1*`) so Obsidian Properties can edit every value.
+  - [x] Style `h4` headings in `.project-prose` so nested case-study headings render distinctly from body text.
   - [ ] Add `npm run new:project` and `npm run promote` helpers and `format:check` in CI; document the remaining authoring workflow in `README.md` and `AGENTS.md`.
 - [x] Adopt a Markdown content-collection model (supersedes the earlier MDX proposal in Section 6); keep Section 6 in sync with the implementation.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
