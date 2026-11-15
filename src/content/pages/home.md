@@ -18,28 +18,28 @@ cta3Label: Get in touch
 cta3Href: /contact
 section1Id: projects
 section1Heading: Selected projects
-section1Intro: Four projects spanning fitness, computer vision, media metadata, and this portfolio.
+section1Intro: Four projects spanning this portfolio, the shared AWS platform behind it, strength training, and computer vision.
 section1LinkLabel: See all projects →
 section1LinkHref: /projects
-card1Eyebrow: Strength training
-card1Title: Iron Altar
-card1Body: A strength-training application focused on clear programming and tracking.
-card1Href: /projects/iron-altar
+card1Eyebrow: Portfolio
+card1Title: Portfolio Website
+card1Body: Astro, TypeScript, Tailwind CSS, AWS infrastructure as code, CI/CD, and preview deployments.
+card1Href: /projects/portfolio-website
 card1LinkLabel: Read case study →
-card2Eyebrow: Computer vision
-card2Title: Squat Monster
-card2Body: Bar-path analysis using computer vision to analyze barbell lifts.
-card2Href: /projects/squat-monster
-card2LinkLabel: Read case study →
-card3Eyebrow: Media metadata
-card3Title: Media Inspector
-card3Body: Inspects media-file metadata and generates a Media Manifest Core specification file.
-card3Href: /projects/media-inspector
+card2Eyebrow: Platform engineering
+card2Title: Infrastructure Platform
+card2Body: Global AWS infrastructure, analytics, and shared services including the in-app issue-reporting backend.
+card2Href: https://github.com/steventclarke/stevenclarke-infrastructure
+card2LinkLabel: View repository →
+card3Eyebrow: Strength training
+card3Title: Iron Altar
+card3Body: A strength-training application focused on clear programming and tracking.
+card3Href: /projects/iron-altar
 card3LinkLabel: Read case study →
-card4Eyebrow: Portfolio
-card4Title: Portfolio Website
-card4Body: Astro, TypeScript, Tailwind CSS, AWS infrastructure as code, CI/CD, and preview deployments.
-card4Href: /projects/portfolio-website
+card4Eyebrow: Computer vision
+card4Title: Squat Monster
+card4Body: Bar-path analysis using computer vision to analyze barbell lifts.
+card4Href: /projects/squat-monster
 card4LinkLabel: Read case study →
 section2Id: strengths
 section2Heading: Core strengths

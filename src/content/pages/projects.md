@@ -1,44 +1,40 @@
 ---
 title: Projects
-description: Featured projects by Steven Clarke - Iron Altar, Squat Monster, Media Inspector, and the Portfolio Website.
+description: Featured Projects by Steven Clarke
 eyebrow: Projects
-heading: Work in progress, documented well.
+heading: Building Stuff I Find Interesting
 intro:
-  - Four projects that demonstrate practical engineering, from fitness to computer vision to media metadata to building this site itself.
-card1Eyebrow: Strength training
-card1Title: Iron Altar
-card1Body: A strength-training application focused on clear programming and tracking.
-card1Href: /projects/iron-altar
+  - Projects that demonstrate practical software engineering built on a custom multi-tenant web application hosted in AWS and maintained by me.
+card1Eyebrow: Portfolio
+card1Title: Portfolio Website
+card1Body: Astro, TypeScript, Tailwind CSS, AWS S3 + CloudFront, CDK, GitHub Actions with OIDC, and preview deployments.
+card1Href: /projects/portfolio-website
 card1LinkLabel: Case study
 card1Link1Label: GitHub
-card1Link1Href: https://github.com/steventclarke/iron-altar
+card1Link1Href: https://github.com/steventclarke/portfolio
 card1Link2Label: Demo
-card1Link2Href: https://iron-altar.stevenclarke.dev
-card2Eyebrow: Computer vision
-card2Title: Squat Monster
-card2Body: Bar-path analysis using computer vision to analyze barbell lifts.
-card2Href: /projects/squat-monster
-card2LinkLabel: Case study
-card2Link1Label: GitHub
-card2Link1Href: https://github.com/steventclarke/squat-monster
-card2Link2Label: Demo
-card2Link2Href: https://squatmonster.stevenclarke.dev
-card3Eyebrow: Media metadata
-card3Title: Media Inspector
-card3Body: Inspects media-file metadata and generates a Media Manifest Core specification file.
-card3Href: /projects/media-inspector
+card1Link2Href: https://portfolio.stevenclarke.dev
+card2Eyebrow: Platform engineering
+card2Title: Infrastructure Platform
+card2Body: Global AWS infrastructure, analytics, and shared services including the in-app issue-reporting backend.
+card2Href: https://github.com/steventclarke/stevenclarke-infrastructure
+card2LinkLabel: View repository
+card3Eyebrow: Strength training
+card3Title: Iron Altar
+card3Body: A strength-training tracker application focused on measuring and visualizing progress.
+card3Href: /projects/iron-altar
 card3LinkLabel: Case study
 card3Link1Label: GitHub
-card3Link1Href: https://github.com/steventclarke/media-inspector
+card3Link1Href: https://github.com/steventclarke/iron-altar
 card3Link2Label: Demo
-card3Link2Href: https://mediainspector.stevenclarke.dev
-card4Eyebrow: Portfolio
-card4Title: Portfolio Website
-card4Body: Astro, TypeScript, Tailwind CSS, AWS S3 + CloudFront, CDK, GitHub Actions with OIDC, and preview deployments.
-card4Href: /projects/portfolio-website
+card3Link2Href: https://iron-altar.stevenclarke.dev
+card4Eyebrow: Computer vision
+card4Title: Squat Monster
+card4Body: Bar-path analysis using computer vision to analyze barbell lifts.
+card4Href: /projects/squat-monster
 card4LinkLabel: Case study
 card4Link1Label: GitHub
-card4Link1Href: https://github.com/steventclarke/portfolio
+card4Link1Href: https://github.com/steventclarke/squat-monster
 card4Link2Label: Demo
-card4Link2Href: https://portfolio.stevenclarke.dev
+card4Link2Href: https://squatmonster.stevenclarke.dev
 ---

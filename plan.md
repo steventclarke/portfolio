@@ -35,8 +35,8 @@ These decisions are settled and replace the earlier open questions.
 | Location | Open to relocation to Austin, TX, Seattle, WA, or Asheville, NC, or remote work from those locations. |
 | Launch date | December 1, 2026. |
 | Available time | Approximately 10 hours per week. |
-| Launch scope | Home, Projects index, 4 project detail pages, About, Contact, resume PDF, 404 page. |
-| Featured projects | Iron Altar, Squat Monster, Media Inspector, and the Portfolio Website itself. All four are currently in progress. |
+| Launch scope | Home, Projects index, 3 project detail pages plus the infrastructure platform card, About, Contact, resume PDF, 404 page. |
+| Featured projects | Portfolio Website, stevenclarke-infrastructure, Iron Altar, and Squat Monster. Media Inspector is deferred until work begins. |
 | NDA case studies | Draft sanitized case studies for: (a) CMS migration from Fifth Kind to ADAM, (b) corporate media inspection for pipeline automation, and (c) retrofitting testability into event-driven microservices. Publish only after NDA review and approval. |
 | Metrics | No reliable quantitative outcomes are available. Use qualitative outcomes, technical decisions, and lessons learned. |
 | Resume | Public PDF download. |
@@ -96,10 +96,10 @@ NDA guidance: describe business problems, technologies, and personal contributio
 
 ### Launch project pages
 
-1. **Iron Altar** — a strength-training application.
-2. **Squat Monster** — a bar-path analysis tool using computer vision to analyze barbell lifts.
-3. **Media Inspector** — a web application that inspects media-file metadata and generates a Media Manifest Core specification file.
-4. **Portfolio Website** — the current website, including how it was built and how it works. Use the implementation as evidence: Astro, TypeScript, Tailwind CSS, AWS infrastructure as code, CI/CD, preview deployments, and the tradeoffs made along the way.
+1. **Portfolio Website** — the current website, including how it was built and how it works. Use the implementation as evidence: Astro, TypeScript, Tailwind CSS, AWS infrastructure as code, CI/CD, preview deployments, and the tradeoffs made along the way.
+2. **stevenclarke-infrastructure** — the shared AWS platform for `stevenclarke.dev`, providing global infrastructure, analytics, and shared services including the in-app issue-reporting backend.
+3. **Iron Altar** — a strength-training application.
+4. **Squat Monster** — a bar-path analysis tool using computer vision to analyze barbell lifts.
 
 For each project, capture the current status, repository URL, demo or app-store URL where applicable, screenshots or video, architecture, key technical decisions, challenges, and lessons learned. See [Featured Projects Inventory](#15-featured-projects-inventory). Because all four are in progress, each page must accurately describe the shipped state rather than planned functionality.
 
@@ -347,24 +347,25 @@ Phase 2 fixes discovered while proving the scaffolding:
 
 ### Phase 3: Onboard the applications — Not started
 
-- [ ] Onboard Iron Altar, Squat Monster, and Media Inspector as tenant apps so their demo hostnames are live (`iron-altar.stevenclarke.dev`, `squatmonster.stevenclarke.dev`, `mediainspector.stevenclarke.dev`).
+- [ ] Onboard Iron Altar and Squat Monster as tenant apps so their demo hostnames are live (`iron-altar.stevenclarke.dev`, `squatmonster.stevenclarke.dev`).
 - [ ] Confirm the platform contract (SSM params, deploy roles, DNS/OAC pattern) generalizes across repositories; coordinate with `stevenclarke-infrastructure`.
 - [ ] Update the portfolio demo/app-store links to the live hosts.
 
 ### Phase 4: Content (post-launch) — In progress
 
 - [ ] Write the final positioning statement and About page.
-- [ ] Complete the four project write-ups and supporting media using the case-study template in `src/content/_templates/project-case-study.md`.
+- [ ] Complete the project write-ups and supporting media using the case-study template in `src/content/_templates/project-case-study.md`.
   - [x] Content pipeline: Markdown content collections with typed frontmatter (`src/content.config.ts`), rendered through `src/layouts/ProjectLayout.astro` and the dynamic `src/pages/projects/[slug].astro` route; shared identity/navigation values centralized in `src/data/site.ts`.
   - [x] Iron Altar migrated to `src/content/projects/iron-altar.md`; the bespoke `src/pages/projects/iron-altar.astro` page and the intermediate `templates/drafts/iron-altar.md` were removed. The case-study template was updated to the new schema. The write-up was later rewritten end-to-end using the Obsidian vault workflow.
   - [x] Obsidian authoring setup: `src/content` is the vault, the template lives in `src/content/_templates/`, frontmatter is edited through Properties, and the workflow is documented in `docs/obsidian.md`.
   - [x] Local draft previews (`PUBLIC_SHOW_DRAFTS=true`) with a visible Draft badge; production builds exclude drafts.
   - [ ] Set `PUBLIC_SHOW_DRAFTS=true` in the preview deployment workflow.
-  - [ ] Migrate Squat Monster, Media Inspector, and Portfolio Website into `src/content/projects/`; generate the `/projects` index and Home cards from the collection.
+  - [ ] Migrate Squat Monster and Portfolio Website into `src/content/projects/`; generate the `/projects` index and Home cards from the collection.
   - [x] Move non-project page content into `src/content/pages/*.md` (`home`, `about`, `contact`, `projects`, `404`) and render it through typed frontmatter plus an optional Markdown body.
   - [x] Add shared `PageHero` and `CtaLinks` components and a `src/content/_templates/page.md` authoring template.
   - [x] Flatten page frontmatter into top-level numbered fields (`cta1*`, `section1*`, `card1*`, `contact1*`) so Obsidian Properties can edit every value.
   - [x] Style `h4` headings in `.project-prose` so nested case-study headings render distinctly from body text.
+  - [x] Reorder featured project cards to Portfolio Website, stevenclarke-infrastructure, Iron Altar, and Squat Monster; remove Media Inspector from the launch set.
   - [ ] Add `npm run new:project` and `npm run promote` helpers and `format:check` in CI; document the remaining authoring workflow in `README.md` and `AGENTS.md`.
 - [x] Adopt a Markdown content-collection model (supersedes the earlier MDX proposal in Section 6); keep Section 6 in sync with the implementation.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
@@ -447,7 +448,7 @@ Verification:
 
 Remaining work:
 
-- Migrate the other three project pages and derive `/projects` and Home cards from the
+- Migrate the other two project pages and derive `/projects` and Home cards from the
   collection instead of duplicating card data in page frontmatter.
 - Optionally move site chrome (site name, navigation, footer links) into a content entry if
   it should be editable outside `src/data/site.ts`.
@@ -478,7 +479,7 @@ For the technical launch (placeholder content), verify:
 
 - Domain resolves and HTTPS works; the apex `stevenclarke.dev` redirects to `portfolio.stevenclarke.dev`.
 - Home, Projects, each project page, About, Contact, resume, and 404 are live.
-- The four project pages link to their GitHub repositories and (as available) live demos.
+- The featured project cards link to their GitHub repositories and (as available) live demos.
 - Public email, LinkedIn, and GitHub links work.
 - Resume PDF is current and downloadable.
 - The `preview` environment is `noindex`; production is indexable.
@@ -497,8 +498,8 @@ studies.
 | NDA constraints limit project detail | Use anonymized case studies; emphasize personal contribution and technical decisions; get approval before publishing |
 | All four featured projects are still in progress | Define the minimum presentable state for each early; write accurate process and architecture content rather than overstating completion |
 | No quantitative outcomes | Focus on constraints, decisions, tradeoffs, qualitative results, and lessons learned |
-| Content work takes longer than development | Start with the four project pages; ship and expand iteratively; defer the NDA case studies and blog |
-| Six-week schedule is tight at 10 hours/week | Protect scope: Home, Projects, four project pages, About, Contact, resume, 404. Defer analytics, blog, and case studies if needed |
+| Content work takes longer than development | Start with the launch project pages; ship and expand iteratively; defer the NDA case studies and blog |
+| Six-week schedule is tight at 10 hours/week | Protect scope: Home, Projects, launch project pages, About, Contact, resume, 404. Defer analytics, blog, and case studies if needed |
 | Static site feels limited later | Architecture allows adding Lambda-backed forms, search, or a CMS without a rewrite |
 | AWS complexity distracts from job search | Use managed services via platform; app owns only S3/CloudFront/DNS records and uses shared OIDC/roles/params from `stevenclarke-infrastructure` |
 | Platform not ready or DNS delegation delayed | Coordinate with `stevenclarke-infrastructure` for zone, certs, roles, and SSM params; use placeholder URLs/preview until available |
@@ -513,13 +514,31 @@ studies.
 - Preview is deployed from the `preview` branch to `portfolio-preview.stevenclarke.dev` (a single preview environment, not per-PR), and is marked `noindex`.
 - Analytics uses self-hosted GoatCounter at `analytics.stevenclarke.dev`; the tracking script is loaded by `BaseLayout.astro` on every page and only production traffic is recorded.
 - The headshot, resume PDF, email, LinkedIn, and GitHub links are available and should be reused across the site.
-- Launch scope now includes four project pages: Iron Altar, Squat Monster, Media Inspector, and the Portfolio Website.
+- Launch scope now features four projects: the Portfolio Website, stevenclarke-infrastructure, Iron Altar, and Squat Monster. Media Inspector is deferred until work begins.
 - Remaining project content: app-store links, videos, key technical decisions, verified screenshots, and architecture details where marked `TBD`.
 - NDA case-study boundaries and the approval process are confirmed, but each case study still needs publication approval.
 - Application responsibilities: provision S3/CloudFront/DNS records in CDK (OAC), read hosted zone ID/cert ARNs from SSM, use `portfolio-deploy-preview`/`portfolio-deploy-prod` via OIDC, and keep region alignment with platform (`us-east-2` primary, `us-east-1` for CloudFront certs).
 
 ## 15. Featured Projects Inventory
 
+- **Portfolio Website** — a website that showcases Steven's work and projects. This is the current website, with detail about how it was built and how it works.
+  - Current status: In progress.
+  - Repository: https://github.com/steventclarke/portfolio
+  - Demo: https://portfolio.stevenclarke.dev
+  - App store: TBD
+  - Screenshots: https://github.com/steventclarke/portfolio/tree/main/screenshots
+  - Video: TBD
+  - Architecture: https://github.com/steventclarke/portfolio/blob/main/ARCHITECTURE.md
+  - Key technical decisions: TBD
+- **stevenclarke-infrastructure** — the shared AWS platform for `stevenclarke.dev`, providing global infrastructure, analytics, and shared services including the in-app issue-reporting backend.
+  - Current status: In progress.
+  - Repository: https://github.com/steventclarke/stevenclarke-infrastructure
+  - Demo: N/A (shared platform)
+  - App store: N/A
+  - Screenshots: TBD
+  - Video: TBD
+  - Architecture: TBD
+  - Key technical decisions: TBD
 - **Iron Altar** — a strength-training application.
   - Current status: In progress.
   - Repository: https://github.com/steventclarke/iron-altar
@@ -537,24 +556,6 @@ studies.
   - Screenshots: https://github.com/steventclarke/squat-monster/tree/main/screenshots
   - Video: TBD
   - Architecture: https://github.com/steventclarke/squat-monster/blob/main/ARCHITECTURE.md
-  - Key technical decisions: TBD
-- **Media Inspector** — a web application that inspects media-file metadata and generates a Media Manifest Core specification file.
-  - Current status: In progress.
-  - Repository: https://github.com/steventclarke/media-inspector
-  - Demo: https://mediainspector.stevenclarke.dev
-  - App store: TBD
-  - Screenshots: https://github.com/steventclarke/media-inspector/tree/main/screenshots
-  - Video: TBD
-  - Architecture: https://github.com/steventclarke/media-inspector/blob/main/ARCHITECTURE.md
-  - Key technical decisions: TBD
-- **Portfolio Website** — a website that showcases Steven's work and projects. This is the current website, with detail about how it was built and how it works.
-  - Current status: In progress.
-  - Repository: https://github.com/steventclarke/portfolio
-  - Demo: https://portfolio.stevenclarke.dev
-  - App store: TBD
-  - Screenshots: https://github.com/steventclarke/portfolio/tree/main/screenshots
-  - Video: TBD
-  - Architecture: https://github.com/steventclarke/portfolio/blob/main/ARCHITECTURE.md
   - Key technical decisions: TBD
 
 ## 16. NDA Case Studies Inventory
