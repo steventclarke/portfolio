@@ -1,10 +1,12 @@
 ---
 import CtaLinks from '../components/CtaLinks.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPage } from '../lib/pages';
+import { getCtas, getPage } from '../lib/pages';
 
 const { entry, Content } = await getPage('404');
-const { title, description, noindex, eyebrow, heading, intro, ctas } = entry.data;
+const { title, description, noindex, eyebrow, heading, intro } = entry.data;
+
+const ctas = getCtas(entry.data);
 const hasBody = Boolean(entry.body?.trim());
 ---
 

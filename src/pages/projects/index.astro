@@ -1,11 +1,12 @@
 ---
 import PageHero from '../../components/PageHero.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPage } from '../../lib/pages';
+import { getCards, getPage } from '../../lib/pages';
 
 const { entry, Content } = await getPage('projects');
-const { title, description, eyebrow, heading, intro, sections } = entry.data;
-const cardsSection = sections.find((section) => section.id === 'projects') ?? sections[0];
+const { title, description, eyebrow, heading, intro } = entry.data;
+
+const cards = getCards(entry.data);
 const hasBody = Boolean(entry.body?.trim());
 ---
 
@@ -13,9 +14,9 @@ const hasBody = Boolean(entry.body?.trim());
   <section class="space-y-8">
     <PageHero eyebrow={eyebrow} heading={heading} intro={intro} introWidth="3xl" />
 
-    {cardsSection && (
+    {cards.length > 0 && (
       <div class="grid gap-6 md:grid-cols-2">
-        {cardsSection.cards.map((card) => (
+        {cards.map((card) => (
           <article class="rounded-2xl border border-slate-200 p-6 transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800">
             {card.eyebrow && (
               <p class="text-sm font-medium text-teal-600 dark:text-teal-400">{card.eyebrow}</p>

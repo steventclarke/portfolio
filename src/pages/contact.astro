@@ -1,10 +1,12 @@
 ---
 import PageHero from '../components/PageHero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPage } from '../lib/pages';
+import { getContacts, getPage } from '../lib/pages';
 
 const { entry, Content } = await getPage('contact');
-const { title, description, eyebrow, heading, intro, contacts } = entry.data;
+const { title, description, eyebrow, heading, intro } = entry.data;
+
+const contacts = getContacts(entry.data);
 const hasBody = Boolean(entry.body?.trim());
 ---
 

@@ -2,11 +2,12 @@
 import CtaLinks from '../components/CtaLinks.astro';
 import PageHero from '../components/PageHero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPage } from '../lib/pages';
+import { getPage, getSections } from '../lib/pages';
 
 const { entry, Content } = await getPage('about');
-const { title, description, eyebrow, heading, intro, sections } = entry.data;
+const { title, description, eyebrow, heading, intro } = entry.data;
 
+const sections = getSections(entry.data);
 const bringSection = sections.find((section) => section.id === 'bring') ?? sections[0];
 const locationSection = sections.find((section) => section.id === 'location') ?? sections[1];
 const hasBody = Boolean(entry.body?.trim());

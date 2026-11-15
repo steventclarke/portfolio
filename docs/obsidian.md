@@ -101,11 +101,13 @@ The non-project routes load a page entry by filename:
 | `/404` | `src/content/pages/404.md` |
 
 1. Open the page file in Obsidian.
-2. Edit the hero fields (`eyebrow`, `heading`, `intro`, `image`, `ctas`) through
-   Properties or source mode.
-3. Edit repeating content in source mode. `sections` holds section headings, prose, lists,
-   cards, and section-level CTAs; `contacts` drives the contact cards.
-4. Optionally add Markdown below the frontmatter. It renders after the structured sections
+2. Edit the hero fields (`eyebrow`, `heading`, `intro`, `image`, `cta1*`-`cta3*`) through
+   the Properties panel.
+3. Edit sections through `section1*`-`section3*`, cards through `card1*`-`card4*`, and
+   contact cards through `contact1*`-`contact3*`. All are top-level fields, so Properties
+   can edit them directly. `intro`, `sectionNItems`, and other list fields are edited as
+   lists.
+4. Optionally add Markdown below the frontmatter. It renders after the structured content
    and is useful for free-form prose that does not fit the section model.
 5. Run the quality gates and commit. Page entries are always built — unlike project case
    studies, they do not use `draft`.
@@ -147,6 +149,10 @@ destination. Do not use `#` placeholders.
 
 ## Page frontmatter fields
 
+All page fields are top-level so Obsidian Properties can edit them directly. Repeat the
+numbered groups (`cta1`-`cta3`, `section1`-`section3`, `card1`-`card4`,
+`contact1`-`contact3`) and omit unused slots.
+
 | Field | Required | Notes |
 | --- | --- | --- |
 | `title` | yes | Browser title |
@@ -154,19 +160,27 @@ destination. Do not use `#` placeholders.
 | `noindex` | no | Defaults to `false`; set `true` for error or private pages |
 | `eyebrow` | no | Small label above the hero heading |
 | `heading` | yes | Hero heading |
-| `intro` | no | Array of hero paragraphs |
+| `intro` | no | List of hero paragraphs |
 | `image` | no | Path under `public/`, e.g. `/images/headshot.jpg` |
 | `imageAlt` | no | Alt text for the hero image |
 | `imageWidth` / `imageHeight` | no | Intrinsic image dimensions; default to `750` |
-| `ctas` | no | Array of `{ label, href, variant }`; `variant` is `primary` or `secondary` |
-| `sections` | no | Array of sections with `id`, `heading`, `intro`, `body`, `items`, `cards`, `ctas`, `linkLabel`, and `linkHref` |
-| `contacts` | no | Array of `{ label, value, href, wide }` contact cards |
+| `cta1Label` / `cta1Href` | no | Hero CTA; repeat `cta2*` and `cta3*`. `ctaNVariant` is `primary` or `secondary` and defaults to `secondary`. |
+| `section1Id` / `section1Heading` / `section1Intro` / `section1Body` | no | Section content; repeat `section2*` and `section3*`. |
+| `section1Items` | no | List of section bullet items. |
+| `section1LinkLabel` / `section1LinkHref` | no | Optional section link. |
+| `section1Cta1Label` / `section1Cta1Href` | no | Section CTA; repeat `Cta2`, `section2*`, and `section3*`. `sectionNCtaNVariant` defaults to `secondary`. |
+| `card1Eyebrow` / `card1Title` / `card1Body` / `card1Href` | no | Card content; repeat `card2*`-`card4*`. |
+| `card1LinkLabel` | no | Primary card link label; defaults to `Read more`. |
+| `card1Link1Label` / `card1Link1Href` | no | Secondary card link; repeat `Link2*`. |
+| `contact1Label` / `contact1Value` / `contact1Href` | no | Contact card; repeat `contact2*` and `contact3*`. |
+| `contact1Wide` | no | Span both columns; defaults to `false`. |
 
-`sections[].cards` entries use `eyebrow`, `title`, `body`, `href`, `linkLabel`, and an
-optional `links` array of `{ label, href }` secondary links.
+CTAs render when both label and href are set. Cards render when title, body, and href are
+set. Contacts render when label, value, and href are set. Sections render when any section
+field is set.
 
-The Home, About, and Projects routes bind sections by `id` (`projects`, `strengths`,
-`bring`, `location`) with an index fallback. Keep those ids when reordering sections.
+Home binds sections by id `projects` and `strengths`; About binds by `bring` and `location`.
+Keep those ids when reordering sections.
 
 ## Content guardrails
 
@@ -177,11 +191,11 @@ The Home, About, and Projects routes bind sections by `id` (`projects`, `strengt
 - Put final images in `public/images/...` and reference them with `/images/...`.
   Attachments pasted into Obsidian go to `_attachments/` locally (gitignored); move final
   assets to `public/images/` before committing.
-- Keep `src/content.config.ts`, the page components/layouts, and the templates in sync when
-  adding or changing frontmatter fields.
-- Very long frontmatter values and nested arrays such as `sections`, `cards`, and `contacts`
-  are easier to edit in source mode. Obsidian Properties handles the scalar fields and
-  simple string lists.
+- Keep `src/content.config.ts`, `src/lib/pages.ts`, the page routes/components, and the
+  templates in sync when adding or changing frontmatter fields.
+- Keep page frontmatter flat. Do not reintroduce nested objects or arrays of objects —
+  Obsidian Properties cannot edit them. If a page needs more than the numbered slots, add
+  another top-level field and update the page helper.
 
 ## Recommended plugins
 
@@ -252,8 +266,11 @@ links, the status panel, and the progress bar.
   Add an Astro page that calls `getPage('<id>')`.
 - **Page edit is not visible**: confirm the filename matches the id loaded by the route
   (`home`, `about`, `contact`, `projects`, `404`) and restart the dev server.
-- **Nested page sections are hard to edit in Properties**: use source mode for `sections`,
-  `cards`, and `contacts` arrays.
+- **A page property is missing from Properties**: page fields must be top-level in
+  `src/content.config.ts`; nested objects and arrays of objects are not editable.
+- **A page needs more cards, sections, or contacts**: add another numbered top-level slot
+  and update `src/lib/pages.ts`. Current limits are 3 sections, 4 cards, 3 contacts, 3 hero
+  CTAs, and 2 section CTAs.
 - **Wikilinks appear literally on the site**: use Markdown links instead.
 - **Obsidian is slow or indexes dependencies**: open `src/content`, not the repository
   root.

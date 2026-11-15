@@ -143,17 +143,20 @@ progressTotal?: number
 lastUpdated?: date
 ```
 
-Non-project pages use `src/content/pages/<page>.md` with a typed hero (`title`,
-`description`, `noindex`, `eyebrow`, `heading`, `intro`, `image`, `ctas`), optional
-`sections`/`contacts`, and an optional Markdown body rendered after the structured content.
+Non-project pages use `src/content/pages/<page>.md` with flat top-level fields for the hero
+(`title`, `description`, `noindex`, `eyebrow`, `heading`, `intro`, `image`, `cta1*`), up to
+three `section*` groups, up to four `card*` groups, and up to three `contact*` groups; an
+optional Markdown body renders after the structured content. Fields stay flat because
+Obsidian Properties cannot edit nested objects or arrays of objects.
 
 Site-wide content:
 
 - `src/data/site.ts` — site-wide identity, navigation, public email, LinkedIn, GitHub,
   availability statement, and resume path. Page prose no longer lives here.
 - `src/content/pages/<page>.md` — one Markdown file per non-project page (`home`, `about`,
-  `contact`, `projects`, `404`). Typed frontmatter drives the hero, CTAs, sections, cards,
-  contacts, and metadata; an optional Markdown body renders after the structured sections.
+  `contact`, `projects`, `404`). Flat top-level frontmatter drives the hero, CTAs, sections,
+  cards, contacts, and metadata; an optional Markdown body renders after the structured
+  content. No nested objects or arrays of objects.
 - Skills grouped by category (languages, frameworks, cloud, data, leadership).
 - Work history with outcomes, not just responsibilities.
 - Resume PDF.
@@ -359,6 +362,7 @@ Phase 2 fixes discovered while proving the scaffolding:
   - [ ] Migrate Squat Monster, Media Inspector, and Portfolio Website into `src/content/projects/`; generate the `/projects` index and Home cards from the collection.
   - [x] Move non-project page content into `src/content/pages/*.md` (`home`, `about`, `contact`, `projects`, `404`) and render it through typed frontmatter plus an optional Markdown body.
   - [x] Add shared `PageHero` and `CtaLinks` components and a `src/content/_templates/page.md` authoring template.
+  - [x] Flatten page frontmatter into top-level numbered fields (`cta1*`, `section1*`, `card1*`, `contact1*`) so Obsidian Properties can edit every value.
   - [ ] Add `npm run new:project` and `npm run promote` helpers and `format:check` in CI; document the remaining authoring workflow in `README.md` and `AGENTS.md`.
 - [x] Adopt a Markdown content-collection model (supersedes the earlier MDX proposal in Section 6); keep Section 6 in sync with the implementation.
 - [ ] Draft the NDA case studies and keep them unpublished pending review; publish once approved.
@@ -379,7 +383,7 @@ Source of truth:
   `progressTotal`, `lastUpdated`, `draft`). The body holds the narrative and Markdown tables.
 - `src/content/pages/<page>.md` — one Markdown file per non-project page (`home`, `about`,
   `contact`, `projects`, `404`). Frontmatter holds the hero, CTA, section, card, and contact
-  data; the optional Markdown body renders after the structured sections.
+  data; the optional Markdown body renders after the structured content.
 - `src/data/site.ts` — shared identity, navigation, contact links, availability, and resume
   path used by the layout and pages.
 - `src/content/_templates/project-case-study.md` — canonical template for new project
@@ -400,9 +404,10 @@ Rendering:
 3. `src/layouts/ProjectLayout.astro` owns the shared header, status panel and progress bar
    (derived from `progressCompleted`/`progressTotal`), evidence cards (from the link fields),
    draft badge, and back link.
-4. `src/lib/pages.ts` loads a page entry by id and renders its optional Markdown body.
+4. `src/lib/pages.ts` loads a page entry by id, renders its optional Markdown body, and
+   assembles CTAs, sections, cards, and contacts from the flat numbered fields.
    `src/components/PageHero.astro` and `src/components/CtaLinks.astro` render the shared hero
-   and CTA treatment; each page composes its sections from typed frontmatter.
+   and CTA treatment; each page composes its sections from the helper output.
 5. `src/styles/global.css` styles rendered Markdown through the `.project-prose` layer.
 6. The resulting project URL is `/projects/<slug>` from the filename, so existing links are
    stable.
@@ -411,7 +416,8 @@ Local editing:
 
 1. Open `src/content` as an Obsidian vault (not the repository root).
 2. Create a note in `projects/` for a case study, or edit `pages/<page>.md` for a site page.
-   Insert the matching template from `_templates/` when creating a new entry.
+   Insert the matching template from `_templates/` when creating a new entry. Page fields
+   are flat top-level properties and are edited through the Properties panel.
 3. Case studies use `draft: true` and preview with `PUBLIC_SHOW_DRAFTS=true npm run dev`;
    page entries are always part of the build.
 4. See `docs/obsidian.md` for settings, frontmatter references, optional plugins, guardrails,
@@ -579,9 +585,9 @@ writing content but must be closed before the relevant phase.
    `format:check`), and `astro check` (`npm run typecheck`) are configured and pass.
 7. [x] **Content model** — project case studies use a Markdown content collection with typed
    frontmatter rendered through `ProjectLayout` and a dynamic `[slug]` route. Home, About,
-   Contact, Projects index, and 404 content now use a `pages` Markdown collection rendered
-   through `PageHero`/`CtaLinks` and page-specific layouts; Obsidian authoring is documented
-   in `docs/obsidian.md`. Remaining Phase 4 work: migrate the other three projects, derive
+   Contact, Projects index, and 404 content now use a `pages` Markdown collection with flat
+   top-level frontmatter rendered through `PageHero`/`CtaLinks` and page-specific layouts;
+   Obsidian authoring is documented in `docs/obsidian.md`. Remaining Phase 4 work: migrate the other three projects, derive
    project cards from the collection, set `PUBLIC_SHOW_DRAFTS=true` in the preview workflow,
    and optionally move site chrome into content (see Section 6 and Phase 4).
 8. [x] **Repository publication** — `steventclarke/portfolio` is published (public).
