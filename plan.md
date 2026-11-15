@@ -44,7 +44,7 @@ These decisions are settled and replace the earlier open questions.
 | Blog / writing | Not at launch. Consider after launch. |
 | Brand assets | Headshot is available; no logo or other brand assets. Use a typographic identity. |
 | Demos | Screenshots, videos, and external links are sufficient. No embedded interactive demos. |
-| Analytics | None for v1; hosted analytics does not fit the budget. Revisit after launch only if the cost can be absorbed. |
+| Analytics | Self-hosted GoatCounter at `analytics.stevenclarke.dev`. Track production pages only; preview and local traffic are excluded. |
 | Source repository | Public as part of the portfolio. Never commit secrets or confidential material. |
 | Preview deployments | Yes. The `preview` branch auto-deploys to `portfolio-preview.stevenclarke.dev`. |
 | Accessibility | WCAG 2.2 AA. No additional localization or compliance requirements. |
@@ -237,13 +237,13 @@ GitHub Actions --OIDC (app role from platform)--> S3 sync + CloudFront invalidat
 
 ### Optional add-ons
 
-- **Analytics:** deferred for v1. Revisit after launch only if a privacy-friendly hosted service fits within the $10/month cap.
+- **Analytics:** self-hosted GoatCounter at `analytics.stevenclarke.dev`. `BaseLayout.astro` loads the tracking script on every page, and only `portfolio.stevenclarke.dev` sends pageviews; preview and local traffic are excluded.
 - **Contact form:** not planned. Revisit only if `mailto:` proves insufficient.
 - **Blog:** add after launch if it supports the job search.
 - **Preview deployments:** confirmed as part of launch.
 - **Error/uptime monitoring:** add lightweight CloudWatch alarms or an external uptime check after launch.
 
-Estimated cost at portfolio traffic levels: roughly $1–5/month for core hosting, plus domain registration and any analytics subscription. Review the total against the $10/month cap before enabling paid add-ons.
+Estimated cost at portfolio traffic levels: roughly $1–5/month for core hosting, plus domain registration. Analytics is self-hosted and adds no subscription cost. Review the total against the $10/month cap before enabling paid add-ons.
 
 ## 9. Repository Structure
 
@@ -307,7 +307,7 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Identify what each project needs to be presentable at launch and flag not-ready items.
 - [x] Confirm NDA boundaries and the approval process for the three proposed case studies — see [NDA Case Studies Inventory](#16-nda-case-studies-inventory).
 - [x] Gather the headshot, resume PDF, public email, LinkedIn URL, and GitHub URL (`public/`, `src/content/pages/contact.md`).
-- [x] Decide the preview-subdomain name and analytics shortlist (`portfolio-preview.stevenclarke.dev`; analytics deferred for v1 on cost).
+- [x] Decide the preview-subdomain name and analytics (`portfolio-preview.stevenclarke.dev`; self-hosted GoatCounter selected at `analytics.stevenclarke.dev`).
 
 ### Phase 1: Foundation (October 26–November 1) — In progress
 
@@ -331,6 +331,7 @@ is filled in post-launch, because the four featured projects are still in progre
 - [x] Smoke-test every placeholder page over HTTPS: Home, Projects, four detail pages, About, Contact, resume, and 404.
 - [x] Basic responsive and keyboard-navigation pass on the placeholder shell (mobile nav stacks, `aria-current` on the active link, visible `:focus-visible` outlines, `prefers-reduced-motion` support, and the 404 page moved onto `BaseLayout`).
 - [x] Automated link checking on every deploy (`npm run links`, wired into CI and both deploy workflows).
+- [x] Embed self-hosted GoatCounter analytics in `BaseLayout` so every page loads the tracking script; production-only tracking is enabled for `portfolio.stevenclarke.dev`.
 - [x] Add manual `workflow_dispatch` deploy jobs for preview and production (branch input, defaulting to `preview` and `main`).
 - [x] Publish the CloudFront distribution domain name to SSM (`/app/portfolio/{environment}/cloudfront-domain`) for the platform's apex-record handoff (created on the next deploy).
 - [ ] Run the launch checklist and launch on December 1, 2026.
@@ -456,7 +457,6 @@ Remaining work:
 
 ### Phase 5: Post-launch housekeeping — Not started
 
-- [deferred] Revisit analytics only if a privacy-friendly hosted service fits the budget.
 - [ ] Add a technical blog or notes section if useful.
 - [ ] Review traffic and contact conversion.
 - [ ] Periodically update dependencies and rerun Lighthouse checks.
@@ -483,7 +483,7 @@ For the technical launch (placeholder content), verify:
 - Resume PDF is current and downloadable.
 - The `preview` environment is `noindex`; production is indexable.
 - No secrets, AWS identifiers, or confidential material are in the public repository.
-- Analytics remains intentionally disabled for v1.
+- Analytics loads on production pages only; preview and local traffic are excluded.
 - CI, the preview workflow, and the production workflow complete successfully.
 
 Phase 4 adds the content-dependent items: SEO metadata and Open Graph previews,
@@ -502,7 +502,7 @@ studies.
 | Static site feels limited later | Architecture allows adding Lambda-backed forms, search, or a CMS without a rewrite |
 | AWS complexity distracts from job search | Use managed services via platform; app owns only S3/CloudFront/DNS records and uses shared OIDC/roles/params from `stevenclarke-infrastructure` |
 | Platform not ready or DNS delegation delayed | Coordinate with `stevenclarke-infrastructure` for zone, certs, roles, and SSM params; use placeholder URLs/preview until available |
-| Analytics pushes the budget over $10/month | Keep analytics disabled for v1; revisit only if cost fits the budget |
+| Analytics pushes the budget over $10/month | Use self-hosted GoatCounter on the platform; no analytics subscription is required |
 | Public repository exposes sensitive information | Scan for secrets, read only from SSM/role ARNs, keep AWS identifiers out of source where possible, and review NDA content before merging |
 | Site performance degrades with heavy media | Optimize images, use modern formats, lazy-load below-the-fold media |
 
@@ -511,7 +511,7 @@ studies.
 - Domain `stevenclarke.dev` is purchased at GoDaddy. Route 53 hosted-zone creation and nameserver delegation are part of `stevenclarke-infrastructure`.
 - Production is served from `portfolio.stevenclarke.dev` and preview from `portfolio-preview.stevenclarke.dev`; the apex `stevenclarke.dev` 301-redirects to `portfolio.stevenclarke.dev` (platform owns the apex record; the app distribution performs the redirect). Legacy `preview.stevenclarke.dev` references have been removed.
 - Preview is deployed from the `preview` branch to `portfolio-preview.stevenclarke.dev` (a single preview environment, not per-PR), and is marked `noindex`.
-- Analytics is disabled for v1 because the hosted cost does not fit the budget.
+- Analytics uses self-hosted GoatCounter at `analytics.stevenclarke.dev`; the tracking script is loaded by `BaseLayout.astro` on every page and only production traffic is recorded.
 - The headshot, resume PDF, email, LinkedIn, and GitHub links are available and should be reused across the site.
 - Launch scope now includes four project pages: Iron Altar, Squat Monster, Media Inspector, and the Portfolio Website.
 - Remaining project content: app-store links, videos, key technical decisions, verified screenshots, and architecture details where marked `TBD`.

@@ -32,6 +32,17 @@ const isCurrent = (href: string) =>
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     <title>{title} | {site.name}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      if (window.location.hostname !== 'portfolio.stevenclarke.dev') {
+        window.goatcounter = { no_onload: true };
+      }
+    </script>
+    <script
+      is:inline
+      data-goatcounter="https://analytics.stevenclarke.dev/count"
+      async
+      src="https://analytics.stevenclarke.dev/count.js"
+    ></script>
   </head>
   <body class="min-h-full bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
     <a
