@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { site } from '../data/site';
 
 interface Props {
   title: string;
@@ -13,12 +14,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const navLinks = [
-  { href: '/projects', label: 'Projects' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/resume.pdf', label: 'Resume' },
-];
+const navLinks = site.nav;
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isCurrent = (href: string) =>
@@ -34,7 +30,7 @@ const isCurrent = (href: string) =>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
-    <title>{title} | Steven Clarke</title>
+    <title>{title} | {site.name}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body class="min-h-full bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
@@ -50,7 +46,7 @@ const isCurrent = (href: string) =>
         aria-label="Primary"
       >
         <a href="/" class="text-lg font-semibold tracking-tight">
-          Steven Clarke
+          {site.name}
         </a>
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium">
           {navLinks.map(({ href, label }) => (
@@ -73,24 +69,23 @@ const isCurrent = (href: string) =>
     </main>
     <footer class="border-t border-slate-200/60 dark:border-slate-800/80">
       <div class="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:text-slate-400">
-        <p>© {new Date().getFullYear()} Steven Clarke</p>
+        <p>
+          © {new Date().getFullYear()} {site.name}
+        </p>
         <div class="flex flex-wrap gap-4">
-          <a
-            class="hover:text-teal-600 dark:hover:text-teal-400"
-            href="mailto:steven.t.clarke@gmail.com"
-          >
+          <a class="hover:text-teal-600 dark:hover:text-teal-400" href={`mailto:${site.email}`}>
             Email
           </a>
           <a
             class="hover:text-teal-600 dark:hover:text-teal-400"
-            href="https://www.linkedin.com/in/steven-clarke-0647a039/"
+            href={site.linkedin}
             rel="noopener noreferrer"
           >
             LinkedIn
           </a>
           <a
             class="hover:text-teal-600 dark:hover:text-teal-400"
-            href="https://github.com/steventclarke"
+            href={site.github}
             rel="noopener noreferrer"
           >
             GitHub

@@ -6,3 +6,8 @@ cdk.out
 cdk.context.json
 infrastructure/cdk/node_modules
 infrastructure/cdk/dist
+
+# Obsidian local vault state (see docs/obsidian.md)
+src/content/.obsidian/
+src/content/.trash/
+src/content/_attachments/
